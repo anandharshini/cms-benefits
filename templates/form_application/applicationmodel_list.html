@@ -1,0 +1,18 @@
+{% extends "fullwidth.html" %}
+{% load cms_tags %}
+
+{% block content %}
+<h1>Application Forms for Me</h1>
+<ul>
+{% for appform in object_list %}
+    <li>
+        <embed src="{{ appform.pdf_file }}" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+    </li>
+{% empty %}
+    <li>Create One
+        <a href="questions/">Questions{{ "Mary had a little"|add:user.id }}</a>
+        <embed src="/media/submitted/1_submitted.pdf" width="60%" height="700" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

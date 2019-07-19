@@ -1,0 +1,56 @@
+{% extends "fullwidth.html" %}
+{% load cms_tags %}
+{% load i18n %}
+
+{% block content %}
+<div>sample formset below</div>
+{{ formset }}
+<p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+<div class="row">
+  <form action="" method="post">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+    {% if wizard.form.forms %}
+      {{ wizard.form.management_form }}
+      {% for form in wizard.form.forms %}
+        <div class="row">
+          {% for field in form %}
+            <div class="input-field col s6">sample
+              {{ field.label_tag }} {{ field }}
+            </div>
+          {%endfor %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="row">
+        {% for field in wizard.form %}
+          <div class="input-field col s6">
+            <div>
+              {{ field.label_tag }}
+              {% if field.help_text %}
+                <sup>{{ field.help_text }}</sup>
+              {% endif %}
+            </div>
+            <div class="pull-right">
+              {{ field }}
+            </div>
+          </div>
+       {% endfor %}
+      </div>
+    {% endif %}
+    {% if wizard.steps.prev %}
+    <button class="btn waves-effect waves-light" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
+    <button class="btn waves-effect waves-light" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
+    {% endif %}
+    <button class="btn waves-effect waves-light" type="submit" value="{% trans "submit" %}">Submit</button>
+  </form>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var select_elems = document.querySelectorAll('select');
+      var select_instances = M.FormSelect.init(select_elems, {});
+      var elems = document.querySelectorAll('.datepicker');
+      var instances = M.Datepicker.init(elems, {'format': 'mm/dd/yyyy'});
+    });
+</script>
+{% endblock %}
