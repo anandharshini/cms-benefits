@@ -34,6 +34,7 @@ easy-thumbnails==2.6
 html5lib==1.0.1
 idna==2.8
 packaging==19.0
+pdfrw==0.4
 Pillow==6.1.0
 pip-upgrader==1.4.15
 pycparser==2.19
