@@ -1,65 +1,103 @@
 from django import forms
-from .models import HealthQuestionnaireModel, EmployeeModel, CoverageModel
+from .models import HealthQuestionnaireModel, EmployeeModel, CoverageModel, MedicalModel, MedicationModel, DependentInfoModel
 from employer.models import Employer
-from django.forms.models import modelformset_factory
 from django.contrib.auth.models import User
-from django.forms import BaseModelFormSet
-from django.contrib.admin import widgets 
+from django.contrib.admin import widgets
+from django.forms import formset_factory 
+from core.utils import CombinedFormBase
+from employer.forms import EmployerForm
+from core.models import Address, EmployeeDependent, LookupModel
+from django.forms import modelformset_factory
 
-class EmployerForm(forms.ModelForm):
+
+class AddressModelForm(forms.ModelForm):
     class Meta:
-        model = Employer
+        model = Address
         exclude = ()
-
-EmployerFormset = modelformset_factory(
-    Employer, exclude=()
-)
+    
+    def __init__(self, *args, **kwargs):
+        super(AddressModelForm, self).__init__(*args, **kwargs)
+        self.fields['address_type'].queryset = LookupModel.objects.filter(type_lookup='address_type')
 
 class EmployeeModelForm(forms.ModelForm):
     class Meta:
         model = EmployeeModel
-        exclude = ()
-
-class BaseEmployeeFormSet(BaseModelFormSet):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.queryset = EmployeeModel.objects.all()
-
-EmployeeFormset = modelformset_factory(
-    EmployeeModel, exclude=(), formset=BaseEmployeeFormSet
-    )
-
-class EmployeeForm(forms.Form):
-    EMPLOYEE_GENDER_CHOICES = (
-        ('M', 'MALE'),
-        ('F', 'FEMALE'),
-    )
-    employer_name = forms.CharField(max_length=250, required=True)
-    employer_steet_address = forms.CharField(max_length=250, required=False)
-    employer_city = forms.CharField(max_length=100, required=False)
-    employer_state = forms.CharField(max_length=50, required=False)
-    employer_zip = forms.CharField(max_length=20, required=False)
-    empl_full_name = forms.CharField(max_length=250, required=True)
-    empl_hire_date = forms.DateTimeField(required=True, widget=forms.DateInput(attrs={'class': 'datepicker'}))
-    empl_dob = forms.DateTimeField(required=False, widget=forms.DateInput(attrs={'class': 'datepicker'}))
-    empl_steet_address = forms.CharField(max_length=250, required=False)
-    empl_city = forms.CharField(max_length=100, required=False)
-    empl_state = forms.CharField(max_length=50, required=False)
-    empl_zip = forms.CharField(max_length=20, required=False)
-    empl_ssn = forms.CharField(max_length=20, required=True)
-    empl_gender = forms.ChoiceField(choices=EMPLOYEE_GENDER_CHOICES, required=False)
-
-class CoverageForm(forms.ModelForm):
+        exclude = ('all_forms_complete', 'login_user', 'current_url',)
+        widgets = {
+            'empl_hire_date': forms.DateInput(attrs={'class': 'datepicker'}),
+            'empl_dob': forms.DateInput(attrs={'class': 'datepicker'})
+        }
     
+    def __init__(self, *args, **kwargs):
+        super(EmployeeModelForm, self).__init__(*args, **kwargs)
+        self.fields['employer'].widget.attrs['disabled'] = 'disabled'
+        self.fields['empl_gender'].queryset = LookupModel.objects.filter(type_lookup='gender')
+        self.fields['form_type'].queryset = LookupModel.objects.filter(type_lookup='form_type')
+        self.fields['marital_status'].queryset = LookupModel.objects.filter(type_lookup='marital_status')
+    
+
+class CoverageForm(forms.ModelForm):    
     class Meta:
         model = CoverageModel
         exclude = ()
         widgets = {
-            'effective_date': forms.DateInput(attrs={'class': 'datepicker'})
+            'effective_date': forms.DateInput(attrs={'class': 'datepicker'}),
+            # 'tobacco_use': forms.RadioSelect,
+            # 'dependent_disabled': forms.RadioSelect,
+            # 'coverage': forms.RadioSelect,
+            'decline_reasons': forms.CheckboxSelectMultiple,
+            # 'dependent_insurance_other_continue': forms.RadioSelect
         }
+
+    def __init__(self, *args, **kwargs):
+        super(CoverageForm, self).__init__(*args, **kwargs)
+        self.fields['tobacco_use'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
+        self.fields['dependent_disabled'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
+        self.fields['dependent_insurance_other_continue'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
+        self.fields['coverage'].queryset = LookupModel.objects.filter(type_lookup='coverage_resp')
+        self.fields['coverage_level'].queryset = LookupModel.objects.filter(type_lookup='coverage_level')
+        self.fields['decline_reasons'].queryset = LookupModel.objects.filter(type_lookup='decline_reason')
 
 class HealthApplicationForm(forms.ModelForm):
     class Meta:
         model = EmployeeModel
         exclude = []
 
+class EmployerAddressForm(CombinedFormBase):
+    form_classes = [EmployerForm, AddressModelForm]
+
+class EmployeeAddressForm(CombinedFormBase):
+    form_classes = [EmployeeModelForm, AddressModelForm]
+
+class DependentInfoForm(forms.ModelForm):
+    class Meta:
+        model = DependentInfoModel
+        exclude=()
+    def __init__(self, *args, **kwargs):
+        super(DependentInfoForm, self).__init__(*args, **kwargs)
+
+class EmployeeDependentForm(forms.ModelForm):
+    class Meta:
+        model = EmployeeDependent
+        fields = '__all__'
+        widgets = {
+            'tobacco_use': forms.CheckboxInput(attrs={ 'style': 'width:50px; height: 50px;' }),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super(EmployeeDependentForm, self).__init__(*args, **kwargs)
+        self.fields['relationship'].queryset = LookupModel.objects.filter(type_lookup='employee_relationship')
+        self.fields['gender'].queryset = LookupModel.objects.filter(type_lookup='gender')
+        self.header = 'Dependents'
+
+MedicalModelFormset = modelformset_factory(
+    MedicalModel,
+    fields='__all__',
+    extra=1
+)
+
+MedicationModelFormset = modelformset_factory(
+    MedicationModel,
+    fields='__all__',
+    extra=1
+)

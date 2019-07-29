@@ -6,12 +6,10 @@
 <ul>
 {% for appform in object_list %}
     <li>
-        <embed src="{{ appform.pdf_file }}" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+        <a href="{{ appform.pdf_file }}" target="_new">{{ appform.name }}</a>
     </li>
 {% empty %}
-    <li>Create One
-        <a href="questions/">Questions{{ "Mary had a little"|add:user.id }}</a>
-        <embed src="/media/submitted/1_submitted.pdf" width="60%" height="700" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+    <li><a href="questions/">Click Here to submit Health Application{{ "Mary had a little"|add:user.id }}</a>
     </li>
 {% endfor %}
 </ul>

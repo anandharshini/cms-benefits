@@ -149,6 +149,7 @@ INSTALLED_APPS = [
     'healthquestionaire.apps.HealthquestionaireConfig',
 
     # third party
+    'django_zappa',
 
 ]
 

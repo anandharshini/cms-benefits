@@ -26,6 +26,8 @@ urlpatterns += i18n_patterns(
     url(r'^account_activation_sent/$', core_views.account_activation_sent, name='account_activation_sent'), # account activation send route
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         core_views.activate, name='activate'), # activate account route
+    url(r'^employer/', include('employer.urls')),
+    url(r'^employee/', include('healthquestionaire.employee_urls')),
     url(r'^', include('cms.urls')),
 )
 

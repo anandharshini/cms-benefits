@@ -1,7 +1,7 @@
 from cms.wizards.wizard_base import Wizard
 from cms.wizards.wizard_pool import wizard_pool
 
-from .forms import HealthApplicationForm, EmployeeForm, EmployeeFormset
+from .forms import HealthApplicationForm
 from .models import EmployeeModel
 
 class HealthAppWizard(Wizard):
@@ -19,7 +19,7 @@ class HealthAppWizard(Wizard):
 health_app_wizard = HealthAppWizard(
     title="Health Questionnaire",
     weight=200,
-    form=EmployeeFormset,
+    form=HealthApplicationForm,
     model=EmployeeModel,
     description="Create a new Health Questions instance",
 )

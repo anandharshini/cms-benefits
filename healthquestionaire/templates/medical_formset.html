@@ -1,0 +1,43 @@
+{% extends "fullwidth.html" %}
+{% load cms_tags %}
+{% load i18n %}
+
+{% block content %}
+<div class="container">
+    <div class="section">
+        Dependent Information
+    </div>
+    <form class="form-horizontal" method="POST" action="">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        {% for form in formset %}
+            {{ form.as_p }}        
+        {% endfor %}
+        <div class="row">
+            {% if back_url %}
+                <div class="col s4">
+                    <a href="{{ back_url }}" class="btn">Back</a>
+                </div>
+            {% endif %}
+            <div class="col s4">
+                <button type="submit" class="btn btn-block btn-primary">Create</button>
+            </div>
+            <div class="col s4">
+                <a class="waves-effect waves-light btn" href="/medications/?employee={{ request.GET.employee }}">Next</a>
+            </div>
+        </div>
+    </form>
+    <table class="striped">
+        <tr>
+            <th>Family Member</th>
+            <th>Disease/Diagnose/Treatment</th>
+        </tr>
+        {% for med in medical_list %}
+            <tr>
+                <td>{{med.family_member}}</td>
+                <td>{{med.disease_diag_treat}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+{
+    "dev": {
+        "s3": "cms-benefits",
+        "django_settings": "bportal.settings",
+        "role_arn": "arn:aws:iam::688988840370:user/cms_benefits_user"
+    }
+}

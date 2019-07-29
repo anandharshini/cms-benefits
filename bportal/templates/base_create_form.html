@@ -1,0 +1,91 @@
+{% extends "fullwidth.html" %}
+{% load cms_tags %}
+{% load i18n %}
+
+{% block content %}
+<div class="container">
+    <form class="form-horizontal" method="POST" action="">
+        {% csrf_token %}
+        <div class="row">
+            {% if form.errors %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div class=" col s12 alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <div class="col s12 alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="row">
+            {% for field in form %}
+            <div class="input-field col s4">
+                {% if field.field.widget.input_type == 'checkbox' %}
+                    <span>
+                        <div class="col s12">
+                            {{ field.label_tag }}
+                        </div>
+                        {% for check in field %}
+                            <div class="col s12">
+                                <label>
+                                    <input name="{{ field.html_name }}" type="checkbox" />
+                                    <span>{{ check.choice_label }}</span>
+                                </label>
+                                {{ check }}
+                            </div>
+                        {% endfor %}
+                    </span>
+                {% elif field.field.widget.input_type == 'radio' %}
+                    <span>
+                        <div class="col s12">
+                            {{ field.label_tag }}
+                        </div>
+                        {% for radio in field %}
+                            {% if radio.choice_label != '---------' %}
+                            <div class="col s3">
+                                <label>
+                                    <input name="{{field.html_name}}" type="radio" />
+                                    <span>{{ radio.choice_label }}</span>
+                                </label>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                {% else %}
+                <span>
+                    {{ field.label_tag }}
+                    {% if field.help_text %}
+                    <sup>{{ field.help_text }}</sup>
+                    {% endif %}
+                    {{ field }} 
+                </span> 
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="row">
+            {% if back_url %}
+                <div class="col s4">
+                    <a href="{{ back_url }}" class="btn">Back</a>
+                </div>
+            {% endif %}
+            <div class="col s4">
+                <button type="submit" class="btn btn-block btn-primary">Next</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var select_elems = document.querySelectorAll('select');
+        var select_instances = M.FormSelect.init(select_elems, {});
+        var elems = document.querySelectorAll('.datepicker');
+        var instances = M.Datepicker.init(elems, {'format': 'mm/dd/yyyy'});
+    });
+</script>
+{% endblock %}

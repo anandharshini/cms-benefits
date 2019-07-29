@@ -1,0 +1,36 @@
+{% extends "fullwidth.html" %}
+{% load cms_tags %}
+{% load i18n %}
+
+{% block content %}
+<form class="form-horizontal" method="POST" action="">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    {% for form in formset %}
+        {{ form.as_p }}        
+    {% endfor %}
+    <div class="row">
+        <div class="col s4">
+            <a class="waves-effect waves-light btn" href="/employee/">Back</a>
+        </div>
+        <div class="col s4">
+            <button type="submit" class="btn btn-block btn-primary">Create</button>
+        </div>
+        <div class="col s4">
+            <a class="waves-effect waves-light btn" href="/medicals/">Next</a>
+        </div>
+    </div>
+</form>
+<table class="striped">
+    <tr>
+        <th>Family Member</th>
+        <th>Dosage</th>
+    </tr>
+    {% for med in medical_list %}
+        <tr>
+            <td>{{med.family_member}}</td>
+            <td>{{med.dosage}}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

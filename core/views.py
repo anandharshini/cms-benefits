@@ -5,6 +5,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
 from core.forms import SignUpForm
 from core.tokens import account_activation_token
+from .models import EmployeeDependent
 
 def signup(request):
     if request.method == 'POST':
@@ -46,3 +47,23 @@ def activate(request, uidb64, token):
         return redirect('home')
     else:
         return render(request, 'account_activation_invalid.html')
+
+def create_dependents_model_form(request):
+    template_name = 'dependents_formset.html'
+    heading_message = 'Dependents Form'
+    if request.method == 'GET':
+        # we don't want to display the already saved model instances
+        formset = DependentsFormset(queryset=EmployeeDependent.objects.none())
+    elif request.method == 'POST':
+        formset = DependentsFormset(request.POST)
+        if formset.is_valid():
+            for form in formset:
+                # only save if name is present
+                if form.cleaned_data.get('family_member'):
+                    form.save()
+            return redirect('.')
+    return render(request, template_name, {
+            'formset': formset,
+            'medical_list': MedicationModel.objects.all(),
+            'heading': heading_message,
+        })

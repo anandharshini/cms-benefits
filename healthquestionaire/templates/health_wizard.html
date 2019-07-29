@@ -3,8 +3,6 @@
 {% load i18n %}
 
 {% block content %}
-<div>sample formset below</div>
-{{ formset }}
 <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
 <div class="row">
   <form action="" method="post">
@@ -15,7 +13,7 @@
       {% for form in wizard.form.forms %}
         <div class="row">
           {% for field in form %}
-            <div class="input-field col s6">sample
+            <div class="input-field col s4">sample
               {{ field.label_tag }} {{ field }}
             </div>
           {%endfor %}
@@ -23,19 +21,32 @@
       {% endfor %}
     {% else %}
       <div class="row">
+        {% for formset in inlines %}
+          {{ formset }}
+        {% endfor %}
+        {% if wizard.form.header %}
+        <h3>{{ wizard.form.header }}</h3>
+        {% endif %}
         {% for field in wizard.form %}
-          <div class="input-field col s6">
+          <div class="input-field col s4">
+            {% if field.field.widget.input_type == 'checkbox' %}
+              <label>
+                {{ field }}
+                <span>{{field.label_tag}}</span>
+              </label>
+            {% else %}
             <div>
-              {{ field.label_tag }}
-              {% if field.help_text %}
-                <sup>{{ field.help_text }}</sup>
-              {% endif %}
-            </div>
-            <div class="pull-right">
-              {{ field }}
-            </div>
+                {{ field.label_tag }}
+                {% if field.help_text %}
+                  <sup>{{ field.help_text }}</sup>
+                {% endif %}
+              </div>
+              <div class="pull-right">
+                {{ field }}
+              </div>  
+            {% endif %}
           </div>
-       {% endfor %}
+        {% endfor %}
       </div>
     {% endif %}
     {% if wizard.steps.prev %}

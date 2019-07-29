@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import EmployeeDependent
+from .models import EmployeeDependent, HeightWeight
 from django.contrib.admin import widgets 
+from django.forms import modelformset_factory
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
@@ -12,11 +13,13 @@ class SignUpForm(UserCreationForm):
         model = User
         fields = ('username', 'email', 'birth_date', 'password1', 'password2', )
 
-
-class EmployeeDependentForm(forms.ModelForm):
+class HeightWeightForm(forms.ModelForm):
     class Meta:
-        model = EmployeeDependent
-        exclude = ()
-        widgets = {
-            'effective_date': forms.DateInput(attrs={'class': 'datepicker', 'id': 'effective_date'})
-        }
+        model = HeightWeight
+        exclude=()
+
+DependentsFormset = modelformset_factory(
+    EmployeeDependent,
+    fields='__all__',
+    extra=1
+)
