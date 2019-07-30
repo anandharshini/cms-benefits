@@ -146,10 +146,9 @@ INSTALLED_APPS = [
     'form_application.apps.FormApplicationConfig',
     'apps_cms_integration.apps.AppsCmsIntegrationConfig',
     'employer.apps.EmployerConfig',
-    'healthquestionaire.apps.HealthquestionaireConfig',
+    'healthquestionaire.apps.HealthquestionaireConfig'
 
     # third party
-    'django_zappa',
 
 ]
 
@@ -190,17 +189,29 @@ CMS_PERMISSION = True
 
 CMS_PLACEHOLDER_CONF = {}
 
+# DATABASES = {
+#     'default': {
+#         'CONN_MAX_AGE': 0,
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'HOST': 'localhost',
+#         'NAME': 'project.db',
+#         'PASSWORD': '',
+#         'PORT': '',
+#         'USER': ''
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'CONN_MAX_AGE': 0,
-        'ENGINE': 'django.db.backends.sqlite3',
-        'HOST': 'localhost',
-        'NAME': 'project.db',
-        'PASSWORD': '',
-        'PORT': '',
-        'USER': ''
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': "cms_benefits_dev_db",
+        'USER': "cms_benefits_db",
+        'PASSWORD': "PERstVLO6",
+        'HOST': "cms-benefits-dev-db.crk7fkrxykmu.us-west-2.rds.amazonaws.com",
+        'PORT': 5432
     }
 }
+
 
 MIGRATION_MODULES = {
     

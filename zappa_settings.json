@@ -1,7 +1,11 @@
 {
     "dev": {
-        "s3": "cms-benefits",
+        "aws_region": "us-west-2",
         "django_settings": "bportal.settings",
-        "role_arn": "arn:aws:iam::688988840370:user/cms_benefits_user"
+        "profile_name": "default",
+        "project_name": "cms-benefits",
+        "runtime": "python3.6",
+        "s3_bucket": "zappa-oqg1er9ra",
+        "cors": false
     }
 }
