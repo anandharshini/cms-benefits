@@ -4,12 +4,12 @@
 {% block content %}
 <h1>Application Forms for Me</h1>
 <ul>
-{% for appform in object_list %}
+{% for appform in application_exist %}
     <li>
-        <a href="{{ appform.pdf_file }}" target="_new">{{ appform.name }}</a>
+        <a href="employee/create/?id={{appform.id}}">Edit Application Form - {{ appform.empl_full_name }}</a>
     </li>
 {% empty %}
-    <li><a href="questions/">Click Here to submit Health Application{{ "Mary had a little"|add:user.id }}</a>
+    <li><a href="employer/create/">Click Here to submit Employee Health Application</a>
     </li>
 {% endfor %}
 </ul>

@@ -12,7 +12,8 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_active = False
+            user.is_active = True
+            user.is_staff = True
             user.save()
             current_site = get_current_site(request)
             subject = 'Activate Your MySite Account'
@@ -22,8 +23,8 @@ def signup(request):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })
-            user.email_user(subject, message)
-            return redirect('account_activation_sent')
+            # user.email_user(subject, message)
+            return redirect('/dev/accounts/login/?toolbar_off')
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})

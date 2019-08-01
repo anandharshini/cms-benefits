@@ -1,0 +1,16 @@
+{% extends "fullwidth.html" %}
+{% load cms_tags %}
+{% load i18n %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+<h1>Done submitting. Go back to Home Page <a href="{{PREFIX_URL}}?toolbar_off">Home</a></h1>
+
+<canvas></canvas>
+
+<script>
+    var canvas = document.querySelector("canvas");
+
+    var signaturePad = new SignaturePad(canvas);
+</script>
+{% endblock %}

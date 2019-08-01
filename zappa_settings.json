@@ -6,6 +6,9 @@
         "project_name": "cms-benefits",
         "runtime": "python3.6",
         "s3_bucket": "zappa-oqg1er9ra",
-        "cors": false
+        "vpc_config" : {
+            "SubnetIds": [ "subnet-e91ca290", "subnet-cb00ffe0" ],
+            "SecurityGroupIds": [ "sg-0d379f782584c2acb" ]
+        }
     }
 }

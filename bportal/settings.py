@@ -1,4 +1,5 @@
 import os  # isort:skip
+
 gettext = lambda s: s
 DATA_DIR = os.path.dirname(os.path.dirname(__file__))
 """
@@ -28,7 +29,7 @@ SECRET_KEY = ')5i6!m4(j5=)m1b3%n^o&wz-0$%j)m7^=*%@v_$(2-q-!2l3xq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['gknh9vvk3h.execute-api.us-west-2.amazonaws.com', '127.0.0.1']
 
 
 # Application definition
@@ -59,7 +60,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
+# STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(DATA_DIR, 'media')
 STATIC_ROOT = os.path.join(DATA_DIR, 'static')
@@ -146,14 +147,14 @@ INSTALLED_APPS = [
     'form_application.apps.FormApplicationConfig',
     'apps_cms_integration.apps.AppsCmsIntegrationConfig',
     'employer.apps.EmployerConfig',
-    'healthquestionaire.apps.HealthquestionaireConfig'
+    'healthquestionaire.apps.HealthquestionaireConfig',
 
     # third party
-
+    'django_s3_storage'
 ]
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/dev/?toolbar_off'
+LOGOUT_REDIRECT_URL = '/dev/accounts/login/?toolbar_off'
 
 LANGUAGES = (
     ## Customize this
@@ -208,7 +209,8 @@ DATABASES = {
         'USER': "cms_benefits_db",
         'PASSWORD': "PERstVLO6",
         'HOST': "cms-benefits-dev-db.crk7fkrxykmu.us-west-2.rds.amazonaws.com",
-        'PORT': 5432
+        'PORT': 5432,
+        'CONN_MAX_AGE': 500
     }
 }
 
@@ -223,3 +225,18 @@ THUMBNAIL_PROCESSORS = (
     'filer.thumbnail_processors.scale_and_crop_with_subject_location',
     'easy_thumbnails.processors.filters'
 )
+
+YOUR_S3_BUCKET = "zappa-cms-static"
+
+STATICFILES_STORAGE = "django_s3_storage.storage.StaticS3Storage"
+AWS_S3_BUCKET_NAME_STATIC = YOUR_S3_BUCKET
+
+# These next two lines will serve the static files directly 
+# from the s3 bucket
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % YOUR_S3_BUCKET
+STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
+
+# OR...if you create a fancy custom domain for your static files use:
+#AWS_S3_PUBLIC_URL_STATIC = "https://static.zappaguide.com/"
+
+PREFIX_URL = '/'

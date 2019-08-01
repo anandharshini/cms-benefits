@@ -11,9 +11,9 @@ class UserMenu(Menu):
     def get_nodes(self, request):
         nodes = []
         # n = NavigationNode(_("Profile"), reverse(profile), 1, attr={'visible_for_anonymous': False}),
-        n1 = NavigationNode(_("Log in"), '/accounts/login/', 3, attr={'visible_for_authenticated': False})
-        n2 = NavigationNode(_("Sign up"), '/signup/', 4, attr={'visible_for_authenticated': False})
-        n3 = NavigationNode(_("Log out"), '/accounts/logout/', 2, attr={'visible_for_anonymous': False})
+        n1 = NavigationNode(_("Log in"), '/dev/accounts/login/?toolbar_off', 3, attr={'visible_for_authenticated': False})
+        n2 = NavigationNode(_("Sign up"), '/dev/signup/?toolbar_off', 4, attr={'visible_for_authenticated': False})
+        n3 = NavigationNode(_("Log out"), '/dev/accounts/logout/?toolbar_off', 2, attr={'visible_for_anonymous': False})
         nodes.append(n1)
         nodes.append(n2)
         nodes.append(n3)

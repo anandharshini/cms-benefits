@@ -24,7 +24,7 @@ def employerview(request):
         if form.is_valid():
             saved_data = form.save()
             print(saved_data)
-            return redirect(''.join(['/employee/create/?employer=', str(saved_data.id)]))
+            return redirect(''.join(['/dev/employee/create/?toolbar_off&employer=', str(saved_data.id)]))
     print(request.GET.get('id', None))
     if request.GET.get('id', None):
         employer = get_object_or_404(Employer, id=request.GET.get('id', None))
@@ -39,7 +39,7 @@ def edit(request, pk, template_name='employer_form.html'):
     form = EmployerForm(request.POST or None, instance=employer)
     if form.is_valid():
         saved_data = form.save()
-        return redirect(''.join(['/employee/?employer=',saved_data.id]))
+        return redirect(''.join(['/dev/employee/?toolbar_off&employer=',saved_data.id]))
     return render(request, template_name, {'form':form})
 # #Delete employer
 # def delete(request, pk, template_name='confirm_delete.html'):

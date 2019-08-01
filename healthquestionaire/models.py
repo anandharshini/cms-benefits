@@ -40,7 +40,6 @@ class HealthQuestionnaireModel(models.Model):
         return self.employee.empl_full_name
 
 class EmployeeModel(models.Model):
-    employer = models.ForeignKey("employer.Employer", verbose_name=_("Employer Info"), on_delete=models.CASCADE, blank=True, null=True)
     empl_full_name = models.CharField(_("Employee Full Name"), max_length=250)
     empl_hire_date = models.DateTimeField(_("Hire Date"), auto_now_add=False, auto_now=False)
     empl_dob = models.DateTimeField(_("DOB"), auto_now=False, auto_now_add=False)
@@ -59,8 +58,8 @@ class EmployeeModel(models.Model):
     hours_worked_per_week = models.IntegerField(_("Hours Worked Per Week (Required in Enrolling)"))
     spouse_employer = models.CharField(_("Spouse's Employer"), max_length=150, blank=True, null=True)
     spouse_buisness_phone = models.CharField(_("Spouse's Buisness Phone"), max_length=50, blank=True, null=True)
-    form_type = models.ManyToManyField("core.LookupModel", verbose_name=_("Form Type"), related_name='empl_form_type')
-    login_user = models.ForeignKey(User, verbose_name=_("Logged In User"), on_delete=models.CASCADE)
+    form_type = models.ManyToManyField("core.LookupModel", verbose_name=_("Form Type"), related_name='empl_form_type', default=40)
+    login_user = models.ForeignKey(User, verbose_name=_("Logged In User"), on_delete=models.CASCADE, blank=True, null=True)
     current_url = models.CharField(_("User in This Page"), max_length=150, blank=True, null=True)
     all_forms_complete = models.BooleanField(_("All Forms Completed"), default=False)
 

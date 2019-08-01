@@ -22,7 +22,7 @@ class AddressModelForm(forms.ModelForm):
 class EmployeeModelForm(forms.ModelForm):
     class Meta:
         model = EmployeeModel
-        exclude = ('all_forms_complete', 'login_user', 'current_url',)
+        exclude = ('all_forms_complete', 'login_user', 'current_url', 'form_type',)
         widgets = {
             'empl_hire_date': forms.DateInput(attrs={'class': 'datepicker'}),
             'empl_dob': forms.DateInput(attrs={'class': 'datepicker'})
@@ -30,9 +30,7 @@ class EmployeeModelForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super(EmployeeModelForm, self).__init__(*args, **kwargs)
-        self.fields['employer'].widget.attrs['disabled'] = 'disabled'
         self.fields['empl_gender'].queryset = LookupModel.objects.filter(type_lookup='gender')
-        self.fields['form_type'].queryset = LookupModel.objects.filter(type_lookup='form_type')
         self.fields['marital_status'].queryset = LookupModel.objects.filter(type_lookup='marital_status')
     
 
@@ -73,8 +71,15 @@ class DependentInfoForm(forms.ModelForm):
     class Meta:
         model = DependentInfoModel
         exclude=()
+
     def __init__(self, *args, **kwargs):
         super(DependentInfoForm, self).__init__(*args, **kwargs)
+        self.fields['diagnose_treated'].queryset = LookupModel.objects.filter(type_lookup='med_conditions')
+        self.fields['past_5_insu_decl'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
+        self.fields['past_24_med_cond'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
+        self.fields['past_24_mon_med_exp_5k'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
+        self.fields['anticipate_hozpital'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
+        self.fields['dependent_pregnant'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
 
 class EmployeeDependentForm(forms.ModelForm):
     class Meta:
