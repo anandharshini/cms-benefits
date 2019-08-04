@@ -37,25 +37,27 @@ class HealthQuestionnaireModel(models.Model):
         db_table = 'health_questionnaire'
 
     def __str__(self):
-        return self.employee.empl_full_name
+        return self.empl_first_name + ' ' + self.empl_last_name
 
 class EmployeeModel(models.Model):
-    empl_full_name = models.CharField(_("Employee Full Name"), max_length=250)
-    empl_hire_date = models.DateTimeField(_("Hire Date"), auto_now_add=False, auto_now=False)
-    empl_dob = models.DateTimeField(_("DOB"), auto_now=False, auto_now_add=False)
-    empl_ssn = models.CharField(max_length=20)
-    empl_gender = models.ForeignKey("core.LookupModel", verbose_name=_("Gender"), related_name='empl_gender_lookupmodel', on_delete=models.CASCADE)
-    street = models.CharField(_("Street"), max_length=50)
-    address2 = models.CharField(_("address2"), max_length=150, blank=True, null=True)
+    fk_employer = models.ForeignKey("employer.Employer", verbose_name=_("Employer"), related_name='employerName')
+    empl_hire_date = models.DateTimeField(_("* Hire Date"), auto_now_add=False, auto_now=False)
+    empl_first_name = models.CharField(_("* First Name"), max_length=250)
+    empl_last_name = models.CharField(_("* Last Name"), max_length=250)
+    empl_dob = models.DateTimeField(_("* DOB"), auto_now=False, auto_now_add=False)
+    empl_ssn = models.CharField(max_length=11, verbose_name=_("* SSN"))
+    empl_gender = models.ForeignKey("core.LookupModel", verbose_name=_("* Gender"), related_name='empl_gender_lookupmodel', on_delete=models.CASCADE)
+    street = models.CharField(_("Address 1"), max_length=50)
+    address2 = models.CharField(_("Address 2"), max_length=150, blank=True, null=True)
     city = models.CharField(_("city"), max_length=150)
-    state = models.CharField(_("state"), max_length=200)
-    zip_code = models.CharField(_("zip_code"), max_length=50)
+    state = models.ForeignKey("core.LookupModel", verbose_name=_("State"), related_name='empl_state')
+    zip_code = models.CharField(_("zip"), max_length=50)
     marital_status = models.ForeignKey("core.LookupModel", verbose_name=_("Marital status"), related_name='empl_marital_status')
     home_phone = models.CharField(_("Home Phone"), max_length=50, blank=True, null=True)
     cell_phone = models.CharField(_("Cell Phone"), max_length=50, blank=True, null=True)
     email_address = models.EmailField(_("Email"), max_length=254, blank=True, null=True)
-    job_title = models.CharField(_("Job Title"), max_length=50, blank=True, null=True)
-    hours_worked_per_week = models.IntegerField(_("Hours Worked Per Week (Required in Enrolling)"))
+    job_title = models.CharField(_("* Job Title"), max_length=150)
+    hours_worked_per_week = models.ForeignKey("core.LookupModel", verbose_name=_("* Working Status (30 hrs or more is Full Time)"), related_name='empl_hours_wored')
     spouse_employer = models.CharField(_("Spouse's Employer"), max_length=150, blank=True, null=True)
     spouse_buisness_phone = models.CharField(_("Spouse's Buisness Phone"), max_length=50, blank=True, null=True)
     form_type = models.ManyToManyField("core.LookupModel", verbose_name=_("Form Type"), related_name='empl_form_type', default=40)
@@ -66,23 +68,24 @@ class EmployeeModel(models.Model):
     class Meta:
         db_table = 'employees'
     def __str__(self):
-        return self.empl_full_name
+        return self.empl_first_name + ' ' + self.empl_last_name
 
 class CoverageModel(models.Model):
+    coverage_level = models.ForeignKey("core.LookupModel", related_name='coverage_level', verbose_name=_("Coverage Level"))
     employee = models.ForeignKey("healthquestionaire.EmployeeModel", verbose_name=_("Employee"), on_delete=models.CASCADE)
     tobacco_use = models.ForeignKey("core.LookupModel", verbose_name=_("Tobacco Use"), related_name='employee_tobacco_use', on_delete=models.CASCADE)
     dependent_disabled = models.ForeignKey("core.LookupModel", related_name='empl_dependent_disabled', verbose_name=_("Are you or any dependent(s) disabled?"), on_delete=models.CASCADE)
     dependent_disabled_name = models.CharField(_("If Yes please indicate name(s)"), max_length=250, blank=True, null=True)
-    dependent_insurance_other_continue = models.ForeignKey("core.LookupModel", related_name='empl_depend_other_insu_coverage', verbose_name=_("Do you, your spouse or your dependents have other health insurance coverage that will continue in addition to this coverage?"), on_delete=models.CASCADE)
-    dependent_isu_coverage_carrier = models.CharField(_("If Yes, name of Carrier"), max_length=250, blank=True, null=True)
-    policy_holders_name = models.CharField(_("Policy Holder's Name"), max_length=50)
-    policy_number = models.CharField(_("Policy Number"), max_length=50)
-    effective_date = models.DateField(_("Effective Policy Date"), auto_now=False, auto_now_add=False)
-    coverage = models.ForeignKey("core.LookupModel", verbose_name=_("Accept/Decline"), related_name='empl_coverage_accept', on_delete=models.CASCADE)
-    coverage_level = models.ManyToManyField("core.LookupModel", related_name='coverage_level', verbose_name=_("Coverage Level"))
-    decline_reasons = models.ManyToManyField("core.LookupModel", related_name='reasons_for_decline', verbose_name=_("Reason for Decline"), blank=True)
-    others = models.CharField(_("Others"), max_length=150, blank=True, null=True)
-    names_covered_dependents = models.CharField(_("Name(s) Of Covered Dependents"), max_length=550)
+    
+    dependent_insurance_other_continue = models.ForeignKey("core.LookupModel", related_name='empl_depend_other_insu_coverage', verbose_name=_("Do you or any of your family have other health insurance that will continue in addition to this coverage?"), on_delete=models.CASCADE)
+    dependent_isu_coverage_carrier = models.CharField(_("If Yes, Other Coverage Carrier Name"), max_length=250, blank=True, null=True)
+    policy_holders_name = models.CharField(_("If Yes, Other Coverage Policy Holder's Name"), max_length=50, blank=True, null=True)
+    policy_number = models.CharField(_("If Yes, Other Coverage Policy Number"), max_length=50, blank=True, null=True)
+    effective_date = models.DateField(_("If Yes, Other Coverage Effective Policy Date"), auto_now=False, auto_now_add=False, blank=True, null=True)
+    # coverage = models.ForeignKey("core.LookupModel", verbose_name=_("Accept/Decline"), related_name='empl_coverage_accept', on_delete=models.CASCADE)
+    # decline_reasons = models.ManyToManyField("core.LookupModel", related_name='reasons_for_decline', verbose_name=_("Reason for Decline"), blank=True)
+    # others = models.CharField(_("Others"), max_length=150, blank=True, null=True)
+    names_covered_dependents = models.CharField(_("If Yes, Name(s) Of Covered Dependents"), max_length=550, blank=True, null=True)
 
     def __str__(self):
         return self.policy_holders_name
