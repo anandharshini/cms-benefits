@@ -2,15 +2,40 @@
 {% load cms_tags %}
 
 {% block content %}
+
+<form action="">
+  
+    <div>
+      <label for="cc">Expiration Date</label>
+      <!-- Set via HTML -->
+      <input id="cc" type="text" placeholder="MM/YY" class="masked" pattern="(1[0-2]|0[1-9])\/(1[5-9]|2\d)" data-valid-example="05/18"/>
+    </div>
+    
+    <div>
+      <label for="czc">Canadian Zip Code</label>
+      <input id="czc" placeholder="XXX XXX" pattern="\w\d\w \d\w\d" class="masked" 
+          data-charset="_X_ X_X" id="zipca" type="text" name="zipcodeca" 
+          title="6-character alphanumeric zip code in the format of A1A 1A1" />
+    </div>
+  
+  </form>
+  
+
+
+
+  
+
 <h1>Application Forms for Me</h1>
 <ul>
 {% for appform in application_exist %}
     <li>
-        <a href="employee/create/?id={{appform.id}}">Edit Application Form - {{ appform.empl_full_name }}</a>
+        <a href="employee/create/?id={{appform.id}}">Edit Application Form - {{ appform.empl_last_name }}</a>
     </li>
 {% empty %}
-    <li><a href="employer/create/">Click Here to submit Employee Health Application</a>
+    <li><a href="employee/create/">Click Here to submit Employee Health Application</a>
     </li>
 {% endfor %}
 </ul>
+
+
 {% endblock %}

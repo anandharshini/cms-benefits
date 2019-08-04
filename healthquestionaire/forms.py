@@ -23,16 +23,19 @@ class EmployeeModelForm(forms.ModelForm):
     class Meta:
         model = EmployeeModel
         exclude = ('all_forms_complete', 'login_user', 'current_url', 'form_type',)
+        # fields = ('')
         widgets = {
             'empl_hire_date': forms.DateInput(attrs={'class': 'datepicker'}),
-            'empl_dob': forms.DateInput(attrs={'class': 'datepicker'})
-        }
+             'empl_dob': forms.DateInput(attrs={'class': 'datepicker'})
+            #'empl_dob': forms.DateTimeField(input_formats=['%d/%m/%y'])
+                    }
     
     def __init__(self, *args, **kwargs):
         super(EmployeeModelForm, self).__init__(*args, **kwargs)
         self.fields['empl_gender'].queryset = LookupModel.objects.filter(type_lookup='gender')
         self.fields['marital_status'].queryset = LookupModel.objects.filter(type_lookup='marital_status')
-    
+        self.fields['hours_worked_per_week'].queryset = LookupModel.objects.filter(type_lookup='hours_worked')
+        self.fields['state'].queryset = LookupModel.objects.filter(type_lookup='us_states')
 
 class CoverageForm(forms.ModelForm):    
     class Meta:
@@ -52,9 +55,9 @@ class CoverageForm(forms.ModelForm):
         self.fields['tobacco_use'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
         self.fields['dependent_disabled'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
         self.fields['dependent_insurance_other_continue'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
-        self.fields['coverage'].queryset = LookupModel.objects.filter(type_lookup='coverage_resp')
+        # self.fields['coverage'].queryset = LookupModel.objects.filter(type_lookup='coverage_resp')
         self.fields['coverage_level'].queryset = LookupModel.objects.filter(type_lookup='coverage_level')
-        self.fields['decline_reasons'].queryset = LookupModel.objects.filter(type_lookup='decline_reason')
+        # self.fields['decline_reasons'].queryset = LookupModel.objects.filter(type_lookup='decline_reason')
 
 class HealthApplicationForm(forms.ModelForm):
     class Meta:

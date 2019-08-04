@@ -10,7 +10,7 @@ class Employer(models.Model):
     city = models.CharField(_("city"), max_length=150)
     state = models.CharField(_("state"), max_length=200)
     zip_code = models.CharField(_("zip_code"), max_length=50)
-    employee = models.ManyToManyField("healthquestionaire.EmployeeModel", verbose_name=_("Employee Employer Relation"))
+    # employee = models.ManyToManyField("healthquestionaire.EmployeeModel", verbose_name=_("Employee Employer Relation"))
     
     class Meta:
         db_table = 'employers'
