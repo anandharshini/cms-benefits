@@ -82,6 +82,7 @@ class CoverageModel(models.Model):
     coverage_level = models.ManyToManyField("core.LookupModel", related_name='coverage_level', verbose_name=_("Coverage Level"))
     decline_reasons = models.ManyToManyField("core.LookupModel", related_name='reasons_for_decline', verbose_name=_("Reason for Decline"), blank=True)
     others = models.CharField(_("Others"), max_length=150, blank=True, null=True)
+    names_covered_dependents = models.CharField(_("Name(s) Of Covered Dependents"), max_length=550)
 
     def __str__(self):
         return self.policy_holders_name

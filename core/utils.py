@@ -25,15 +25,20 @@ WIDGET_SUBTYPE_KEY = '/Widget'
 
 def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
     template_pdf = pdfrw.PdfReader(input_pdf_path)
-    annotations = template_pdf.pages[0][ANNOT_KEY]
-    for annotation in annotations:
-        if annotation[SUBTYPE_KEY] == WIDGET_SUBTYPE_KEY:
-            if annotation[ANNOT_FIELD_KEY]:
-                key = annotation[ANNOT_FIELD_KEY][1:-1]
-                if key in data_dict.keys():
-                    annotation.update(
-                        pdfrw.PdfDict(V='{}'.format(data_dict[key]))
-                    )
+    for page in template_pdf.pages:
+        annotations = page[ANNOT_KEY]
+        for annotation in annotations:
+            if annotation[SUBTYPE_KEY] == WIDGET_SUBTYPE_KEY:
+                if annotation[ANNOT_FIELD_KEY]:
+                    key = annotation[ANNOT_FIELD_KEY][1:-1]
+                    if key in data_dict.keys():
+                        print(key, data_dict[key])
+                        if data_dict[key] == 'Yes' or data_dict[key] == 'No' or data_dict[key] == 'Off':
+                            annotation.update(pdfrw.PdfDict(AS=pdfrw.PdfName(data_dict[key])))
+                        else:
+                            annotation.update(
+                                pdfrw.PdfDict(V='{}'.format(data_dict[key]))
+                            )
     pdfrw.PdfWriter().write(output_pdf_path, template_pdf)
 
 
