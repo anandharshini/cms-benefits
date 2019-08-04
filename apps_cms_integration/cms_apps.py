@@ -3,7 +3,7 @@ from cms.apphook_pool import apphook_pool
 from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
 from form_application.views import ApplicationModelListView
-from healthquestionaire.views import HealthQuestionView, create_medical_model_form, create_medication_model_form, coverageview, dependentinfoview
+from healthquestionaire.views import create_medical_model_form, create_medication_model_form, coverageview, dependentinfoview
 from employer.views import employerview, edit
 from django.contrib.auth.decorators import login_required
 from core.views import create_dependents_model_form
@@ -16,7 +16,7 @@ class PdfPluginApp(CMSApp):
     def get_urls(self, page=None, language=None, **kwargs):
         return [
             url(r'^$', login_required(ApplicationModelListView.as_view())),
-            url(r'^questions/', login_required(HealthQuestionView.as_view(HealthQuestionView.FORMS))),
+            # url(r'^questions/', login_required(HealthQuestionView.as_view(HealthQuestionView.FORMS))),
             # url(r'^employer/$', login_required(include('employer.urls'))),
             # url('^employer/edit/<int:pk>/', edit, name='employer_edit'),
             # url('^employer/create/', employerview, name='employer_create'),

@@ -190,29 +190,29 @@ CMS_PERMISSION = True
 
 CMS_PLACEHOLDER_CONF = {}
 
-# DATABASES = {
-#     'default': {
-#         'CONN_MAX_AGE': 0,
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'HOST': 'localhost',
-#         'NAME': 'project.db',
-#         'PASSWORD': '',
-#         'PORT': '',
-#         'USER': ''
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "cms_benefits_dev_db",
-        'USER': "cms_benefits_db",
-        'PASSWORD': "PERstVLO6",
-        'HOST': "cms-benefits-dev-db.crk7fkrxykmu.us-west-2.rds.amazonaws.com",
-        'PORT': 5432,
-        'CONN_MAX_AGE': 500
+        'CONN_MAX_AGE': 0,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'HOST': 'localhost',
+        'NAME': 'project.db',
+        'PASSWORD': '',
+        'PORT': '',
+        'USER': ''
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': "cms_benefits_dev_db",
+#         'USER': "cms_benefits_db",
+#         'PASSWORD': "PERstVLO6",
+#         'HOST': "cms-benefits-dev-db.crk7fkrxykmu.us-west-2.rds.amazonaws.com",
+#         'PORT': 5432,
+#         'CONN_MAX_AGE': 500
+#     }
+# }
 
 
 MIGRATION_MODULES = {

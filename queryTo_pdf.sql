@@ -73,5 +73,20 @@ from crosstab($$ select hdi.employee_id as id, value_lookup as attr, hdidt.looku
  Left join healthquestionaire_dependentinfomodel_diagnose_treated hdidt on hdidt.dependentinfomodel_id = hdi.id and  hdidt.lookupmodel_id = lkup.id
  where lkup.type_lookup = 'med_conditions' order by 1 $$) as ct (employee_id int, value_1 bool, value_2 bool,value_3 bool, value_4 bool,value_5 bool, value_6 bool,value_7 bool, value_8 bool,value_9 bool, value_10 bool,value_11 bool, value_12 bool, value_13 bool, value_14 bool, value_15 bool);
 
+select case when hdi.past_5_insu_decl_id = 18 then 'Yes' else 'No' end as section_6_question_2_yes,
+case when hdi.past_5_insu_decl_id = 19 then 'Yes' else 'No' end as section_6_question_2_no,
+case when hdi.past_24_med_cond_id = 18 then 'Yes' else 'No' end as section_6_question_3_yes,
+case when hdi.past_24_med_cond_id = 19 then 'Yes' else 'No' end as section_6_question_3_no,
+case when hdi.past_24_mon_med_exp_5k_id = 18 then 'Yes' else 'No' end as section_6_question_4_yes,
+case when hdi.past_24_mon_med_exp_5k_id = 19 then 'Yes' else 'No' end as section_6_question_4_no,
+case when hdi.anticipate_hozpital_id = 18 then 'Yes' else 'No' end as section_6_question_5_yes,
+case when hdi.anticipate_hozpital_id = 19 then 'Yes' else 'No' end as section_6_question_5_no,
+case when hdi.dependent_pregnant_id = 18 then 'Yes' else 'No' end as section_6_question_6_yes,
+case when hdi.dependent_pregnant_id = 19 then 'Yes' else 'No' end as section_6_question_6_no
+from healthquestionaire_dependentinfomodel hdi where hdi.employee_id = 4;
 
+select * from healthquestionaire_medicalmodel hmm where hmm.employee_id = 4; 
 
+select empldep.first_name || ' ' || empldep.last_name as section_4_first_name_last_name_row, (select value_lookup from lookup_data where id = empldep.relationship_id limit 1) as section_4_relationship_row,
+empldep.ssn as section_4_ssn_row, empldep.dob_dependent as section_4_doc_row, empldep.age as section_4_age_row, (select value_lookup from lookup_data where id = empldep.gender_id limit 1) as section_4_gender_row
+from employee_dependents empldep where employee_id = 4;

@@ -21,6 +21,7 @@ django-autoslug==1.9.4
 django-classy-tags==0.9.0
 django-cms==3.6.0
 django-email-extras==0.3.4
+django-environ==0.4.5
 django-filer==1.5.0
 django-formtools==2.1
 django-ipware==2.1.0
@@ -29,6 +30,7 @@ django-mptt==0.10.0
 django-nine==0.2.2
 django-nonefield==0.3
 django-polymorphic==2.0.3
+django-s3-storage==0.12.4
 django-sekizai==1.0.0
 django-treebeard==4.3
 djangocms-admin-style==1.2.9
@@ -44,7 +46,7 @@ djangocms-style==2.2.0
 djangocms-text-ckeditor==3.7.0
 djangocms-video==2.0.5
 docopt==0.6.2
-docutils==0.15
+docutils==0.14
 durationpy==0.5
 easy-thumbnails==2.6
 ebcli==4.0.18
@@ -65,6 +67,7 @@ keyrings.alt==3.1.1
 lambda-packages==0.20.0
 MarkupSafe==1.1.1
 odfpy==1.4.0
+olefile==0.46
 openpyxl==2.6.2
 packaging==19.0
 pdfrw==0.4

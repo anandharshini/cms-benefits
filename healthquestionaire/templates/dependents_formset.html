@@ -5,32 +5,68 @@
 {% block content %}
 <form class="form-horizontal" method="POST" action="">
     {% csrf_token %}
-    {{ formset.management_form }}
-    {% for form in formset %}
-        {{ form.as_p }}        
-    {% endfor %}
     <div class="row">
-        <div class="col s4">
-            <a class="waves-effect waves-light btn" href="/employee/">Back</a>
-        </div>
+        {% for field in form %}
+            <div class="input-field col s4">
+                {% if field.field.widget.input_type == 'checkbox' %}
+                    <span>
+                        <div class="col s12">
+                            {{ field.label_tag }}
+                        </div>
+                        {% for check in field %}
+                            <div class="col s12">
+                                
+                                {{ check }}
+                            </div>
+                        {% endfor %}
+                    </span>
+                {% else %}
+                    <span>
+                        {{ field.label_tag }}
+                        {% if field.help_text %}
+                        <sup>{{ field.help_text }}</sup>
+                        {% endif %}
+                        {{ field }} 
+                    </span> 
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        {% if back_url %}
+            <div class="col s4">
+                <a href="{{ back_url }}" class="btn">Back</a>
+            </div>
+        {% endif %}
         <div class="col s4">
             <button type="submit" class="btn btn-block btn-primary">Create</button>
         </div>
-        <div class="col s4">
-            <a class="waves-effect waves-light btn" href="/medicals/">Next</a>
-        </div>
+        {% if next_url %}
+            <div class="col s4">
+                <a href="{{ next_url }}" class="btn">Next</a>
+            </div>
+        {% endif %}
     </div>
 </form>
 <table class="striped">
     <tr>
-        <th>Family Member</th>
-        <th>Dosage</th>
+        <th>First Name</th>
+        <th>Last Name</th>
     </tr>
-    {% for med in medical_list %}
+    {% for empl in employee_depedents %}
         <tr>
-            <td>{{med.family_member}}</td>
-            <td>{{med.dosage}}</td>
+            <td>{{empl.first_name}}</td>
+            <td>{{empl.last_name}}</td>
         </tr>
     {% endfor %}
 </table>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var select_elems = document.querySelectorAll('select');
+            var select_instances = M.FormSelect.init(select_elems, {});
+            var elems = document.querySelectorAll('.datepicker');
+            var instances = M.Datepicker.init(elems, {'format': 'mm/dd/yyyy'});
+        });
+</script>
 {% endblock %}

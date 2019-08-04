@@ -1,11 +1,16 @@
 from django.contrib.sites.shortcuts import get_current_site
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
-from core.forms import SignUpForm
+from core.forms import SignUpForm, EmployeeDependentForm
 from core.tokens import account_activation_token
 from .models import EmployeeDependent
+from django.conf import settings
+from healthquestionaire.models import EmployeeModel
+from django.http import Http404
+from django.conf import settings
+from healthquestionaire.views import get_employee_instance
 
 def signup(request):
     if request.method == 'POST':
@@ -50,21 +55,38 @@ def activate(request, uidb64, token):
         return render(request, 'account_activation_invalid.html')
 
 def create_dependents_model_form(request):
-    template_name = 'dependents_formset.html'
-    heading_message = 'Dependents Form'
-    if request.method == 'GET':
-        # we don't want to display the already saved model instances
-        formset = DependentsFormset(queryset=EmployeeDependent.objects.none())
-    elif request.method == 'POST':
-        formset = DependentsFormset(request.POST)
-        if formset.is_valid():
-            for form in formset:
-                # only save if name is present
-                if form.cleaned_data.get('family_member'):
-                    form.save()
-            return redirect('.')
-    return render(request, template_name, {
-            'formset': formset,
-            'medical_list': MedicationModel.objects.all(),
+    employee = get_employee_instance(request.user, request.GET.get('employee', None))
+    heading_message = 'Dependents'
+    if request.method == 'POST':
+        print('POST FORM Employee Dependent', request.POST)
+        try:
+            coverage = get_object_or_404(EmployeeDependent, employee=employee)
+            form = EmployeeDependentForm(request.POST, instance=coverage)
+        except Http404:
+            form = EmployeeDependentForm(request.POST)
+        if form.is_valid():
+            saved_data = form.save()
+            print(saved_data)
+            return redirect(''.join([settings.PREFIX_URL,'medicals/?toolbar_off&employee=', str(employee.id)]))
+        else:
+            print(form.errors)
+
+    print(request.GET.get('employee', None))
+    if request.GET.get('employee', None):
+        print('testing')
+        try:
+            coverage = get_object_or_404(EmployeeDependent, employee=employee)
+            form = EmployeeDependentForm(instance=coverage)
+        except Http404:
+            form = EmployeeDependentForm(initial={'employee': employee})
+    else:
+        return redirect(''.join([settings.PREFIX_URL, 'employee/create/?toolbar_off']))
+    return render(request,'dependents_formset.html',
+        {
+            'form': form, 
+            'back_url': ''.join([settings.PREFIX_URL,'coverage/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
+            'next_url': ''.join([settings.PREFIX_URL,'medicals/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
+            'employee_depedents': EmployeeDependent.objects.filter(employee=employee),
             'heading': heading_message,
+            'PREFIX_URL': settings.PREFIX_URL,
         })

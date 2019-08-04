@@ -3,7 +3,7 @@ from django.http import FileResponse
 from reportlab.pdfgen import canvas
 from formtools.wizard.views import SessionWizardView
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import EmployerAddressForm, EmployeeAddressForm, CoverageForm, EmployeeDependentForm, EmployeeModelForm
+from .forms import EmployerAddressForm, EmployeeAddressForm, CoverageForm, EmployeeModelForm
 from core.utils import write_fillable_pdf
 from .process_submitted_data import process_data
 from .forms import MedicalModelFormset, MedicationModelFormset, DependentInfoForm
@@ -17,9 +17,23 @@ from django.db import connection
 from employer.models import Employer
 import pdfrw
 
+def get_employee_instance(user, employee_id):
+    try:
+        if employee_id:
+            employee = get_object_or_404(EmployeeModel, id=employee_id)
+        elif user:
+            employee = get_object_or_404(EmployeeModel, login_user=user)
+        else:
+            return redirect(''.join([settings.PREFIX_URL, 'employee/create/?toolbar_off']))
+        return employee
+    except Http404:
+        return redirect(''.join([settings.PREFIX_URL, 'employee/create/?toolbar_off']))
+        
 def create_medical_model_form(request):
     template_name = 'medical_formset.html'
     heading_message = 'Medical Form'
+    employee = get_employee_instance(request.user, request.GET.get('employee', None))
+    
     if request.method == 'GET':
         # we don't want to display the already saved model instances
         formset = MedicalModelFormset(queryset=MedicalModel.objects.none())
@@ -28,13 +42,15 @@ def create_medical_model_form(request):
         if formset.is_valid():
             for form in formset:
                 # only save if name is present
-                if form.cleaned_data.get('family_member'):
-                    form.save()
-            return redirect('.')
+                if employee:
+                    saved_data = form.save(commit=False)
+                    saved_data.employee = employee
+                    saved_data.save()
+            return redirect(''.join([settings.PREFIX_URL, 'medicals/?toolbar_off&employee=', str(employee.id)]))
     return render(request, template_name, {
             'formset': formset,
-            'back_url': ''.join([settings.PREFIX_URL,'coverage/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
-            'medical_list': MedicalModel.objects.all(),
+            'back_url': ''.join([settings.PREFIX_URL,'dependents/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
+            'medical_list': MedicalModel.objects.filter(employee=employee),
             'heading': heading_message,
             'PREFIX_URL': settings.PREFIX_URL,
         })
@@ -42,6 +58,8 @@ def create_medical_model_form(request):
 def create_medication_model_form(request):
     template_name = 'medication_formset.html'
     heading_message = 'Medication Form'
+    employee = get_employee_instance(request.user, request.GET.get('employee', None))
+    
     if request.method == 'GET':
         # we don't want to display the already saved model instances
         formset = MedicationModelFormset(queryset=MedicationModel.objects.none())
@@ -50,12 +68,15 @@ def create_medication_model_form(request):
         if formset.is_valid():
             for form in formset:
                 # only save if name is present
-                if form.cleaned_data.get('family_member'):
-                    form.save()
-            return redirect('.')
+               if employee:
+                    saved_data = form.save(commit=False)
+                    saved_data.employee = employee
+                    saved_data.save()
+            return redirect(''.join([settings.PREFIX_URL, 'medications/?toolbar_off&employee=', str(employee.id)]))
     return render(request, template_name, {
             'formset': formset,
-            'medical_list': MedicationModel.objects.all(),
+            'back_url': ''.join([settings.PREFIX_URL,'medical/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
+            'medical_list': MedicationModel.objects.filter(employee=employee),
             'heading': heading_message,
             'PREFIX_URL': settings.PREFIX_URL,
         })
@@ -79,30 +100,30 @@ def some_view(request):
     # present the option to save the file.
     return FileResponse(buffer, as_attachment=True, filename='media/pdf-templates/LHP_Employee_Health_Application_2019.pdf')
 
-class HealthQuestionView(SessionWizardView):
-    FORMS = [
-        ("employer", EmployerAddressForm),
-        ("employee", EmployeeAddressForm)
-        #  ("coverage", CoverageForm),
-        #  ("dependents", EmployeeDependentForm )
-        ]
+# class HealthQuestionView(SessionWizardView):
+#     FORMS = [
+#         ("employer", EmployerAddressForm),
+#         ("employee", EmployeeAddressForm)
+#         #  ("coverage", CoverageForm),
+#         #  ("dependents", EmployeeDependentForm )
+#         ]
 
-    # TEMPLATES = {"employee": "questions/employee_form.html",
-    #          "coverage": "questions/employee_coverage_form.html",
-    #          "dependents": "questions/employee_dependent_form.html"}
-    template_name = 'health_wizard.html'
-    # def get_template_names(self):
-    #     return [self.TEMPLATES[self.steps.current]]
+#     # TEMPLATES = {"employee": "questions/employee_form.html",
+#     #          "coverage": "questions/employee_coverage_form.html",
+#     #          "dependents": "questions/employee_dependent_form.html"}
+#     template_name = 'health_wizard.html'
+#     # def get_template_names(self):
+#     #     return [self.TEMPLATES[self.steps.current]]
     
-    def done(self, form_list, **kwargs):
-        submitted_data = [form.cleaned_data for form in form_list]
-        try:
-            employee = process_data(self.request, submitted_data)
-        except Exception as ex:
-            print(ex, 'error generic')
+#     def done(self, form_list, **kwargs):
+#         submitted_data = [form.cleaned_data for form in form_list]
+#         try:
+#             employee = process_data(self.request, submitted_data)
+#         except Exception as ex:
+#             print(ex, 'error generic')
         
-        response = redirect(''.join([settings.PREFIX_URL,'coverage/?toolbar_off&empl_id=', str(employee.id)]))
-        return response
+#         response = redirect(''.join([settings.PREFIX_URL,'coverage/?toolbar_off&empl_id=', str(employee.id)]))
+#         return response
 
 
 class CoverageModelCreateView(CreateView):
@@ -143,8 +164,12 @@ def employeeview(request):
         print(employee)
         form = EmployeeModelForm(instance=employee)
     else:
-        form = EmployeeModelForm(initial={ 'login_user': request.user, 'all_forms_completed': False})
-    return render(request,'healthquestionaire/employee_form.html',{'form': form, 'back_url': '%semployer/create/?toolbar_off&id=%s' %(settings.PREFIX_URL, employer_id if employer_id else '')})
+        try:
+            employee = get_object_or_404(EmployeeModel, login_user=user)
+            form = EmployeeModelForm(instance=employee)
+        except Http404:
+            form = EmployeeModelForm(initial={ 'login_user': request.user, 'all_forms_completed': False})
+    return render(request,'healthquestionaire/employee_form.html',{'form': form, 'back_url': settings.PREFIX_URL})
 
 def coverageview(request):
     employee_id = request.GET.get('employee', None)
@@ -158,7 +183,7 @@ def coverageview(request):
         if form.is_valid():
             saved_data = form.save()
             print(saved_data)
-            return redirect(''.join([settings.PREFIX_URL, 'medicals/?toolbar_off&employee=', employee_id]))
+            return redirect(''.join([settings.PREFIX_URL, 'dependents/?toolbar_off&employee=', employee_id]))
         else:
             print(form.errors)
 
@@ -171,7 +196,7 @@ def coverageview(request):
         except Http404:
             form = CoverageForm(initial={'employee': employee_id})
     else:
-        form = CoverageForm()
+        return redirect(''.join([settings.PREFIX_URL, 'employee/create/?toolbar_off']))
     return render(request,'healthquestionaire/coverage_form.html',{'form': form, 'back_url': '%semployee/create/?toolbar_off&id=%s' %(settings.PREFIX_URL, employee_id if employee_id else coverage.employee.id)})
 
 def dependentinfoview(request):
@@ -243,55 +268,55 @@ def dependentinfoview(request):
                         for row in cursor.fetchall()]
                     # print(data[0])
                     pdf_data = data[0]
-                    sql = """
-                        select case when value_1 is not null then 'Yes' else 'No' end as section_6_cardiac_disorder_yes,
-                            case when value_1 is null then 'Yes' else 'No' end as section_6_cardiac_disorder_no,
-                            case when value_2 is not null then 'Yes' else 'No' end as section_6_cancer_tumor_yes,
-                            case when value_2 is null then 'Yes' else 'No' end as section_6_cancer_tumor_no,
-                            case when value_3 is not null then 'Yes' else 'No' end as section_6_diabetes_yes,
-                            case when value_3 is null then 'Yes' else 'No' end as section_6_diabetes_no,
-                            case when value_4 is not null then 'Yes' else 'No' end as section_6_kidney_disorder_yes,
-                            case when value_4 is null then 'Yes' else 'No' end as section_6_kidney_disorder_no,
-                            case when value_5 is not null then 'Yes' else 'No' end as section_6_respiratory_disorder_yes,
-                            case when value_5 is null then 'Yes' else 'No' end as section_6_respiratory_disorder_no,
-                            case when value_6 is not null then 'Yes' else 'No' end as section_6_liver_disorder_yes,
-                            case when value_6 is null then 'Yes' else 'No' end as section_6_liver_disorder_no,
-                            case when value_7 is not null then 'Yes' else 'No' end as section_6_high_blood_pressure_yes,
-                            case when value_7 is null then 'Yes' else 'No' end as section_6_high_blood_pressure_no,
-                            case when value_8 is not null then 'Yes' else 'No' end as section_6_aids_hiv_immune_system_disorder_yes,
-                            case when value_8 is null then 'Yes' else 'No' end as section_6_aids_hiv_immune_system_disorder_no,
-                            case when value_9 is not null then 'Yes' else 'No' end as section_6_alcohol_drug_abuse_yes,
-                            case when value_9 is null then 'Yes' else 'No' end as section_6_alcohol_drug_abuse_no,
-                            case when value_10 is not null then 'Yes' else 'No' end as section_6_mental_nervous_disorder_yes,
-                            case when value_10 is null then 'Yes' else 'No' end as section_6_mental_nervous_disorder_no,
-                            case when value_11 is not null then 'Yes' else 'No' end as section_6_neuro_muscular_yes,
-                            case when value_11 is null then 'Yes' else 'No' end as section_6_neuro_muscular_no,
-                            case when value_12 is not null then 'Yes' else 'No' end as section_6_stomach_gastrointestinal_yes,
-                            case when value_12 is null then 'Yes' else 'No' end as section_6_stomach_gastrointestinal_no,
-                            case when value_13 is not null then 'Yes' else 'No' end as section_6_joint_disorder_yes,
-                            case when value_13 is null then 'Yes' else 'No' end as section_6_joint_disorder_no,
-                            case when value_14 is not null then 'Yes' else 'No' end as section_6_seizures_convulsion_epilepsy_yes,
-                            case when value_14 is null then 'Yes' else 'No' end as section_6_seizures_convulsion_epilepsy_no,
-                            case when value_15 is not null then 'Yes' else 'No' end as section_6_any_other_medical_condition_yes,
-                            case when value_15 is null then 'Yes' else 'No' end as section_6_any_other_medical_condition_no
+                    # sql = """
+                    #     select case when value_1 is not null then 'Yes' else 'No' end as section_6_cardiac_disorder_yes,
+                    #         case when value_1 is null then 'Yes' else 'No' end as section_6_cardiac_disorder_no,
+                    #         case when value_2 is not null then 'Yes' else 'No' end as section_6_cancer_tumor_yes,
+                    #         case when value_2 is null then 'Yes' else 'No' end as section_6_cancer_tumor_no,
+                    #         case when value_3 is not null then 'Yes' else 'No' end as section_6_diabetes_yes,
+                    #         case when value_3 is null then 'Yes' else 'No' end as section_6_diabetes_no,
+                    #         case when value_4 is not null then 'Yes' else 'No' end as section_6_kidney_disorder_yes,
+                    #         case when value_4 is null then 'Yes' else 'No' end as section_6_kidney_disorder_no,
+                    #         case when value_5 is not null then 'Yes' else 'No' end as section_6_respiratory_disorder_yes,
+                    #         case when value_5 is null then 'Yes' else 'No' end as section_6_respiratory_disorder_no,
+                    #         case when value_6 is not null then 'Yes' else 'No' end as section_6_liver_disorder_yes,
+                    #         case when value_6 is null then 'Yes' else 'No' end as section_6_liver_disorder_no,
+                    #         case when value_7 is not null then 'Yes' else 'No' end as section_6_high_blood_pressure_yes,
+                    #         case when value_7 is null then 'Yes' else 'No' end as section_6_high_blood_pressure_no,
+                    #         case when value_8 is not null then 'Yes' else 'No' end as section_6_aids_hiv_immune_system_disorder_yes,
+                    #         case when value_8 is null then 'Yes' else 'No' end as section_6_aids_hiv_immune_system_disorder_no,
+                    #         case when value_9 is not null then 'Yes' else 'No' end as section_6_alcohol_drug_abuse_yes,
+                    #         case when value_9 is null then 'Yes' else 'No' end as section_6_alcohol_drug_abuse_no,
+                    #         case when value_10 is not null then 'Yes' else 'No' end as section_6_mental_nervous_disorder_yes,
+                    #         case when value_10 is null then 'Yes' else 'No' end as section_6_mental_nervous_disorder_no,
+                    #         case when value_11 is not null then 'Yes' else 'No' end as section_6_neuro_muscular_yes,
+                    #         case when value_11 is null then 'Yes' else 'No' end as section_6_neuro_muscular_no,
+                    #         case when value_12 is not null then 'Yes' else 'No' end as section_6_stomach_gastrointestinal_yes,
+                    #         case when value_12 is null then 'Yes' else 'No' end as section_6_stomach_gastrointestinal_no,
+                    #         case when value_13 is not null then 'Yes' else 'No' end as section_6_joint_disorder_yes,
+                    #         case when value_13 is null then 'Yes' else 'No' end as section_6_joint_disorder_no,
+                    #         case when value_14 is not null then 'Yes' else 'No' end as section_6_seizures_convulsion_epilepsy_yes,
+                    #         case when value_14 is null then 'Yes' else 'No' end as section_6_seizures_convulsion_epilepsy_no,
+                    #         case when value_15 is not null then 'Yes' else 'No' end as section_6_any_other_medical_condition_yes,
+                    #         case when value_15 is null then 'Yes' else 'No' end as section_6_any_other_medical_condition_no
 
 
-                        from crosstab($$ select hdi.employee_id as id, value_lookup as attr, hdidt.lookupmodel_id = lkup.id as value from lookup_data lkup 
-                        left join healthquestionaire_dependentinfomodel hdi on hdi.employee_id = """ + str(employee_id) + """
-                        Left join healthquestionaire_dependentinfomodel_diagnose_treated hdidt on hdidt.dependentinfomodel_id = hdi.id and  hdidt.lookupmodel_id = lkup.id
-                        where lkup.type_lookup = 'med_conditions' order by 1 $$) as ct (employee_id int, value_1 bool, value_2 bool,value_3 bool, value_4 bool,value_5 bool, value_6 bool,value_7 bool, value_8 bool,value_9 bool, value_10 bool,value_11 bool, value_12 bool, value_13 bool, value_14 bool, value_15 bool)
-                    """
-                    cursor.execute(sql)
-                    columns = [col[0] for col in cursor.description]
-                    data_med_conditions = [dict(zip(columns, row))
-                        for row in cursor.fetchall()]
-                    if data_med_conditions:
-                        for (key, value) in data_med_conditions[0].items():
-                        # Check if key is even then add pair to new dictionary
-                            # if value == 'Yes':
-                            #     data_med_conditions[0][key] = pdfrw.PdfName('Yes')
+                    #     from crosstab($$ select hdi.employee_id as id, value_lookup as attr, hdidt.lookupmodel_id = lkup.id as value from lookup_data lkup 
+                    #     left join healthquestionaire_dependentinfomodel hdi on hdi.employee_id = """ + str(employee_id) + """
+                    #     Left join healthquestionaire_dependentinfomodel_diagnose_treated hdidt on hdidt.dependentinfomodel_id = hdi.id and  hdidt.lookupmodel_id = lkup.id
+                    #     where lkup.type_lookup = 'med_conditions' order by 1 $$) as ct (employee_id int, value_1 bool, value_2 bool,value_3 bool, value_4 bool,value_5 bool, value_6 bool,value_7 bool, value_8 bool,value_9 bool, value_10 bool,value_11 bool, value_12 bool, value_13 bool, value_14 bool, value_15 bool)
+                    # """
+                    # cursor.execute(sql)
+                    # columns = [col[0] for col in cursor.description]
+                    # data_med_conditions = [dict(zip(columns, row))
+                    #     for row in cursor.fetchall()]
+                    # if data_med_conditions:
+                    #     for (key, value) in data_med_conditions[0].items():
+                    #     # Check if key is even then add pair to new dictionary
+                    #         # if value == 'Yes':
+                    #         #     data_med_conditions[0][key] = pdfrw.PdfName('Yes')
                             
-                            pdf_data[key] = value
+                    #         pdf_data[key] = value
                     # print(pdf_data)
                     sql = """
                         select case when hdi.past_5_insu_decl_id = 18 then 'Yes' else 'No' end as section_6_question_2_yes,
@@ -312,6 +337,44 @@ def dependentinfoview(request):
                     if data_med_info:
                         for (key, value) in data_med_info[0].items():
                             pdf_data[key] = value
+                    # Adding Employee Dependents to pdf form
+                    sql = """
+                    select empldep.first_name || ' ' || empldep.last_name as section_4_first_name_last_name_row, (select value_lookup from lookup_data where id = empldep.relationship_id limit 1) as section_4_relationship_row,
+                        empldep.ssn as section_4_ssn_row, empldep.dob_dependent as section_4_doc_row, empldep.age as section_4_age_row, (select value_lookup from lookup_data where id = empldep.gender_id limit 1) as section_4_gender_row
+                        from employee_dependents empldep where employee_id = """ + str(employee_id)
+                    cursor.execute(sql)
+                    columns = [col[0] for col in cursor.description]
+                    data_med_info = [dict(zip(columns, row))
+                        for row in cursor.fetchall()]
+                    if data_med_info:
+                        for (key, value, index) in data_med_info[0].items():
+                            pdf_data[''.join([key,'_', index])] = value
+                    # Adding medical conditions to pdf form
+                    sql = """
+                    select hmedcond.family_member as section_6_question_7_family_member_row, hmedcond.disease_diag_treat as section_6_question_7_disease_row, hmedcond.date_of_onset as section_6_question_7_date_of_onset_row, 
+                        hmedcond.date_last_seen as section_6_question_7_date_last_seen_row, hmedcond.remaining_symp_probs as section_6_question_7_remaining_symptoms_row
+                        from healthquestionaire_medicalmodel hmedcond where employee_id = """ + str(employee_id)
+                    cursor.execute(sql)
+                    columns = [col[0] for col in cursor.description]
+                    data_med_info = [dict(zip(columns, row))
+                        for row in cursor.fetchall()]
+                    if data_med_info:
+                        for (key, value, index) in data_med_info[0].items():
+                            pdf_data[''.join([key,'_', index])] = value
+                    
+                    # Adding prescriptions to PDF form
+                    sql = """
+                    select hmedm.family_member as section_6_question_8_family_member_name_row, hmedm.medication_rx_injection as section_6_question_8_medication_row, hmedm.dosage as section_6_question_8_dosage_row, 
+                        hmedm.med_condition as section_6_question_8_medical_condition_row
+                        from healthquestionaire_medicationmodel hmedm where employee_id = """ + str(employee_id)
+                    cursor.execute(sql)
+                    columns = [col[0] for col in cursor.description]
+                    data_med_info = [dict(zip(columns, row))
+                        for row in cursor.fetchall()]
+                    if data_med_info:
+                        for (key, value, index) in data_med_info[0].items():
+                            pdf_data[''.join([key,'_', index])] = value
+
                     write_fillable_pdf('media/pdf-templates/LHP_Employee_Health_Application_2019(120618)(Fillable).pdf', ''.join(['media/submitted/', str(employee_id), '.pdf']), pdf_data)
                 finally:
                     cursor.close()
