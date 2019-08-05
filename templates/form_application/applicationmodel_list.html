@@ -3,16 +3,14 @@
 
 {% block content %}
 
-<form action="">
+<!-- <form action="">
   
     <div>
       <label for="cc">Expiration Date</label>
-      <!-- Set via HTML -->
       <input id="cc" type="text" placeholder="MM/dd/yyyy" class="masked" pattern="^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$" data-valid-example="01/01/1900"/>
     </div>
     <div>
             <label for="e">ssn</label>
-            <!-- Set via HTML -->
             <input id="e" type="text" placeholder="999-99-9999" class="masked" pattern="^([1-9])(?!\1{2}-\1{2}-\1{4})[1-9]{2}-[1-9]{2}-[1-9]{4}"/>
           </div>
     <div>
@@ -24,8 +22,8 @@
   
   </form>
   
-  <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/masking-input.js" data-autoinit="true"></script>
-
+  <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/masking-input.js" data-autoinit="true"></script> -->
+<!-- 
 <style>
 input {
   font-family: monospace;
@@ -61,13 +59,13 @@ input.masked,
   padding-right: 10px;
   background-color: transparent;
   text-transform: uppercase; }
-</style>
+</style> -->
 
   
 
 <h2>Welcome to Alford & Associates</h2>
 <H5>Please click the link below to complete your 2019 Employee Health Application</H5><br><br>
-<ul>
+<ul style="margin-bottom: 250px;">
 {% for appform in application_exist %}
     <li>
         <a href="employee/create/?id={{appform.id}}">2019 Employee Health Application - {{ appform.empl_last_name }}</a>
@@ -77,6 +75,6 @@ input.masked,
     </li>
 {% endfor %}
 </ul>
-<br><br><br><br><br>
+
 
 {% endblock %}
