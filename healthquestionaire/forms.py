@@ -46,7 +46,7 @@ class CoverageForm(forms.ModelForm):
             # 'tobacco_use': forms.RadioSelect,
             # 'dependent_disabled': forms.RadioSelect,
             # 'coverage': forms.RadioSelect,
-            'decline_reasons': forms.CheckboxSelectMultiple,
+            # 'decline_reasons': forms.CheckboxSelectMultiple,
             # 'dependent_insurance_other_continue': forms.RadioSelect
         }
 
@@ -84,20 +84,6 @@ class DependentInfoForm(forms.ModelForm):
         self.fields['anticipate_hozpital'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
         self.fields['dependent_pregnant'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
 
-class EmployeeDependentForm(forms.ModelForm):
-    class Meta:
-        model = EmployeeDependent
-        fields = '__all__'
-        widgets = {
-            'tobacco_use': forms.CheckboxInput(attrs={ 'style': 'width:50px; height: 50px;' }),
-        }
-    
-    def __init__(self, *args, **kwargs):
-        super(EmployeeDependentForm, self).__init__(*args, **kwargs)
-        self.fields['relationship'].queryset = LookupModel.objects.filter(type_lookup='employee_relationship')
-        self.fields['gender'].queryset = LookupModel.objects.filter(type_lookup='gender')
-        self.header = 'Dependents'
-
 MedicalModelFormset = modelformset_factory(
     MedicalModel,
     fields='__all__',
@@ -109,3 +95,19 @@ MedicationModelFormset = modelformset_factory(
     fields='__all__',
     extra=1
 )
+
+class MedicalModelForm(forms.ModelForm):
+    class Meta:
+        model = MedicalModel
+        exclude=()
+    
+    def __init__(self, *args, **kwargs):
+        pass
+
+class MedicationModelForm(forms.ModelForm):
+    class Meta:
+        model = MedicationModel
+        exclude=()
+    
+    def __init__(self, *args, **kwargs):
+        pass

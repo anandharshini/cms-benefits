@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 # Create your models here.
 class Employer(models.Model):
     name = models.CharField(_("Employer Name"), max_length=250)
-    ein = models.CharField(_("EIN"), max_length=150, blank=True, null=True)
+    # ein = models.CharField(_("EIN"), max_length=150, blank=True, null=True)
     street = models.CharField(_("Street"), max_length=50)
     address2 = models.CharField(_("address2"), max_length=150, blank=True, null=True)
     city = models.CharField(_("city"), max_length=150)
