@@ -14,8 +14,15 @@
 </head>
 <body>
   {% cms_toolbar %}
-  <nav class="light-blue lighten-1" role="navigation">
-    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Portal Logo</a>
+  
+  <div style="height:30px; background-color: #2A4F63; color:white; padding-top:3px; margin-bottom: 0px; ">
+  <div class="row">
+      <div class="col s8"></div>
+    <div class="col s4"><b>Call us Toll-Free: 1.800.877.4755</d></div>
+  </div>
+  </div>
+  <nav role="navigation" style="color: #58585A; background-color:white; ">
+    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo"><img src="http://www.alfordllc.com/wp-content/uploads/2017/07/Alford-associates-insurance.png" width="175px"/></a>
       <ul class="right hide-on-med-and-down">
         {% show_menu 0 100 100 100 %}
       </ul>
@@ -26,16 +33,32 @@
       <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
     </div>
   </nav>
-  <main>
+
+  <main style="padding: 5px 15px 5px 15px;">
       {% block content %}{% endblock content %}
   </main>
-  <footer class="page-footer orange">
+  <footer class="page-footer"  style="background-color: #2E2E2E;">
     {% static_placeholder 'footer' or %}
     <div class="container">
         <div class="row">
-          <div class="col l6 s12">
-            <h5 class="white-text">Company Bio</h5>
-          </div>
+            <div class="col s4">
+                <img src="http://www.alfordllc.com/wp-content/uploads/2017/07/Alford-logo-footer-1.png"/>
+              </div>
+              <div class="col s4">
+ Call us 24 Hours a Day: 1-800-877-4755<br><br>
+
+                Alford & Associates is available 24/7 to answer<br>
+                your plan questions and provide plan support.<br><br>
+                
+              </div>
+            <div class="col s4">
+               
+                Phone<br>
+                985-853-1080<br><br>
+                Fax<br>
+                985-853-2080
+            </div>
+          
         </div>
       </div>
       <div class="footer-copyright">
