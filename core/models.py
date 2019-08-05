@@ -84,7 +84,7 @@ class EmployeeDependent(models.Model):
     dob_dependent = models.DateTimeField(_("Date of Birth"), auto_now=False, auto_now_add=False)
     age = models.IntegerField(_("Age"))
     gender = models.ForeignKey("core.LookupModel", related_name='empl_gender', verbose_name=_("Gender"), on_delete=models.CASCADE)
-    tobacco_use = models.BooleanField(_("Tobacco Use"))
+    tobacco_use = models.ForeignKey("core.LookupModel", verbose_name=_("Tobacco Use"), related_name='dependent_tobacco_use', on_delete=models.CASCADE)
     employee = models.ForeignKey("healthquestionaire.EmployeeModel", verbose_name=_("Employee"), on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:

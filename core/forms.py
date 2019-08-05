@@ -27,13 +27,14 @@ DependentsFormset = modelformset_factory(
 class EmployeeDependentForm(forms.ModelForm):
     class Meta:
         model = EmployeeDependent
-        exclude=('employee',)
-        widgets = {
-            'tobacco_use': forms.CheckboxInput(attrs={ 'style': 'width:50px; height: 50px;' }),
-        }
+        exclude=('employee','age',)
+        # widgets = {
+        #     'tobacco_use': forms.CheckboxInput(attrs={ 'style': 'width:50px; height: 50px;' }),
+        # }
     
     def __init__(self, *args, **kwargs):
         super(EmployeeDependentForm, self).__init__(*args, **kwargs)
+        self.fields['tobacco_use'].queryset = LookupModel.objects.filter(type_lookup='yes_no')
         self.fields['relationship'].queryset = LookupModel.objects.filter(type_lookup='employee_relationship')
         self.fields['gender'].queryset = LookupModel.objects.filter(type_lookup='gender')
         self.header = 'Dependents'

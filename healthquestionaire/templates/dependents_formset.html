@@ -3,10 +3,17 @@
 {% load i18n %}
 
 {% block content %}
+<div class="container">
+        <h4>
+                Dependent Information
+        </h4>
+        <p>Please add all participating dependents.</p><br>
 <form class="form-horizontal" method="POST" action="">
     {% csrf_token %}
     <div class="row">
         {% for field in form %}
+        <!-- {{field.html_name}}
+        {{ field.field.widget.input_type }} -->
             <div class="input-field col s4">
                 {% if field.field.widget.input_type == 'checkbox' %}
                     <span>
@@ -32,35 +39,45 @@
             </div>
         {% endfor %}
     </div>
-    <div class="row">
-        {% if back_url %}
-            <div class="col s4">
-                <a href="{{ back_url }}" class="btn">Back</a>
-            </div>
-        {% endif %}
-        <div class="col s4">
-            <button type="submit" class="btn btn-block btn-primary">Create</button>
-        </div>
-        {% if next_url %}
-            <div class="col s4">
-                <a href="{{ next_url }}" class="btn">Next</a>
-            </div>
-        {% endif %}
-    </div>
+  
 </form>
-<table class="striped">
+<center>
+        <button type="submit" class="btn btn-block btn-primary">Save New Entry</button>
+</center>
+{% if employee_depedents %}
+<table class="striped" style="font-size:10pt;">
     <tr>
         <th>First Name</th>
         <th>Last Name</th>
+        <th>Relationship</th>
+        <th>DOB</th>
     </tr>
     {% for empl in employee_depedents %}
         <tr>
             <td>{{empl.first_name}}</td>
             <td>{{empl.last_name}}</td>
+            <td>{{empl.relationship}}</td>
+            <td>{{empl.dob_dependent}}</td>
         </tr>
     {% endfor %}
 </table>
+{% endif %}
+<br>
 
+<div class="row">
+        {% if back_url %}
+            <div class="col s10">
+                <a href="{{ back_url }}" class="btn">Back</a>
+            </div>
+        {% endif %}
+       
+        {% if next_url %}
+            <div class="col s2">
+                <a href="{{ next_url }}" class="btn">Next</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
 <script>
         document.addEventListener('DOMContentLoaded', function() {
             var select_elems = document.querySelectorAll('select');
@@ -69,4 +86,5 @@
             var instances = M.Datepicker.init(elems, {'format': 'mm/dd/yyyy'});
         });
 </script>
+
 {% endblock %}
