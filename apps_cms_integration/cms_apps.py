@@ -6,7 +6,7 @@ from form_application.views import ApplicationModelListView
 from healthquestionaire.views import create_medical_model_form, create_medication_model_form, coverageview, dependentinfoview
 from employer.views import employerview, edit
 from django.contrib.auth.decorators import login_required
-from core.views import create_dependents_model_form
+from core.views import create_dependents_model_form, signatureview
 
 @apphook_pool.register  # register the application
 class PdfPluginApp(CMSApp):
@@ -25,4 +25,5 @@ class PdfPluginApp(CMSApp):
             url(r'^medicals/', login_required(create_medical_model_form)),
             url(r'^medications/', login_required(create_medication_model_form)),
             url(r'^dependentinfo/', login_required(dependentinfoview)),
+            url(r'^signpdf/', login_required(signatureview)),
         ]

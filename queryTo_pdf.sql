@@ -90,3 +90,12 @@ select * from healthquestionaire_medicalmodel hmm where hmm.employee_id = 4;
 select empldep.first_name || ' ' || empldep.last_name as section_4_first_name_last_name_row, (select value_lookup from lookup_data where id = empldep.relationship_id limit 1) as section_4_relationship_row,
 empldep.ssn as section_4_ssn_row, empldep.dob_dependent as section_4_doc_row, empldep.age as section_4_age_row, (select value_lookup from lookup_data where id = empldep.gender_id limit 1) as section_4_gender_row
 from employee_dependents empldep where employee_id = 4;
+
+select hmedcond.family_member as section_6_question_7_family_member_row, hmedcond.disease_diag_treat as section_6_question_7_disease_row, hmedcond.date_of_onset as section_6_question_7_date_of_onset_row, 
+hmedcond.date_last_seen as section_6_question_7_date_last_seen_row, hmedcond.remaining_symp_probs as section_6_question_7_remaining_symptoms_row
+from healthquestionaire_medicalmodel hmedcond where employee_id = 4;
+
+select hmedm.family_member as section_6_question_8_family_member_name_row, hmedm.medication_rx_injection as section_6_question_8_medication_row, hmedm.dosage as section_6_question_8_dosage_row, 
+hmedm.med_condition as section_6_question_8_medical_condition_row
+from healthquestionaire_medicationmodel hmedm where employee_id = 4;
+

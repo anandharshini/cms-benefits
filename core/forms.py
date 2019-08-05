@@ -37,3 +37,6 @@ class EmployeeDependentForm(forms.ModelForm):
         self.fields['relationship'].queryset = LookupModel.objects.filter(type_lookup='employee_relationship')
         self.fields['gender'].queryset = LookupModel.objects.filter(type_lookup='gender')
         self.header = 'Dependents'
+
+class SignatureForm(forms.Form):
+    sign_data = forms.CharField(max_length=1024)

@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
-from core.forms import SignUpForm, EmployeeDependentForm
+from core.forms import SignUpForm, EmployeeDependentForm, SignatureForm
 from core.tokens import account_activation_token
 from .models import EmployeeDependent
 from django.conf import settings
@@ -11,6 +11,9 @@ from healthquestionaire.models import EmployeeModel
 from django.http import Http404
 from django.conf import settings
 from healthquestionaire.views import get_employee_instance
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
+
 
 def signup(request):
     if request.method == 'POST':
@@ -59,26 +62,19 @@ def create_dependents_model_form(request):
     heading_message = 'Dependents'
     if request.method == 'POST':
         print('POST FORM Employee Dependent', request.POST)
-        try:
-            coverage = get_object_or_404(EmployeeDependent, employee=employee)
-            form = EmployeeDependentForm(request.POST, instance=coverage)
-        except Http404:
-            form = EmployeeDependentForm(request.POST)
+        form = EmployeeDependentForm(request.POST)
         if form.is_valid():
-            saved_data = form.save()
-            print(saved_data)
-            return redirect(''.join([settings.PREFIX_URL,'medicals/?toolbar_off&employee=', str(employee.id)]))
+            if employee:
+                saved_data = form.save(commit=False)
+                saved_data.employee = employee
+                saved_data.save()
+                print(saved_data)
+            return redirect(''.join([settings.PREFIX_URL,'dependents/?toolbar_off&employee=', str(employee.id)]))
         else:
             print(form.errors)
-
     print(request.GET.get('employee', None))
     if request.GET.get('employee', None):
-        print('testing')
-        try:
-            coverage = get_object_or_404(EmployeeDependent, employee=employee)
-            form = EmployeeDependentForm(instance=coverage)
-        except Http404:
-            form = EmployeeDependentForm(initial={'employee': employee})
+        form = EmployeeDependentForm(initial={'employee': employee})
     else:
         return redirect(''.join([settings.PREFIX_URL, 'employee/create/?toolbar_off']))
     return render(request,'dependents_formset.html',
@@ -87,6 +83,32 @@ def create_dependents_model_form(request):
             'back_url': ''.join([settings.PREFIX_URL,'coverage/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
             'next_url': ''.join([settings.PREFIX_URL,'medicals/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
             'employee_depedents': EmployeeDependent.objects.filter(employee=employee),
+            'heading': heading_message,
+            'PREFIX_URL': settings.PREFIX_URL,
+        })
+
+
+def signatureview(request):
+    employee = get_employee_instance(request.user, request.GET.get('employee', None))
+    heading_message = 'Signature'
+    if request.method == 'POST':
+        print('Signature', request.POST)
+        form = SignatureForm(request.POST)
+        if employee:
+            pdf_file = ''.join(['media/submitted/', str(employee.id), '_signature.pdf'])
+            c = canvas.Canvas(pdf_file)
+            # io_img = StringIO(request.POST['sign_data'])
+            # reportlab_io_img = ImageReader(io_img)
+            # c.drawImage(reportlab_io_img, 10, 10, mask='auto')
+            # c.showPage()
+            # c.save()
+
+    form = SignatureForm()
+    # else:
+    #     return redirect(''.join([settings.PREFIX_URL, 'employee/create/?toolbar_off']))
+    return render(request,'healthquestionaire/done.html',
+        {
+            'form': form, 
             'heading': heading_message,
             'PREFIX_URL': settings.PREFIX_URL,
         })
