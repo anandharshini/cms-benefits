@@ -13,6 +13,7 @@ from django.conf import settings
 from healthquestionaire.views import get_employee_instance
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
+from core.utils import signaturemerger
 
 
 def signup(request):
@@ -95,13 +96,17 @@ def signatureview(request):
         print('Signature', request.POST)
         form = SignatureForm(request.POST)
         if employee:
-            pdf_file = ''.join(['media/submitted/', str(employee.id), '_signature.pdf'])
-            c = canvas.Canvas(pdf_file)
-            # io_img = StringIO(request.POST['sign_data'])
-            # reportlab_io_img = ImageReader(io_img)
-            # c.drawImage(reportlab_io_img, 10, 10, mask='auto')
-            # c.showPage()
-            # c.save()
+
+            sign_file = ''.join(['media/submitted/', str(employee.id), '_signature.pdf'])
+            c = canvas.Canvas(sign_file)
+            c.drawImage(request.POST['sign_data'], 10, 10, mask='auto')
+            c.showPage()
+            c.save()
+
+            employee_file = ''.join(['media/submitted/', str(employee.id), '.pdf'])
+            signed_file = ''.join(['media/submitted/', str(employee.id), '_signed.pdf'])
+            signaturemerger(employee_file, sign_file, signed_file)
+
 
     form = SignatureForm()
     # else:

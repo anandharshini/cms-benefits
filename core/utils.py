@@ -40,7 +40,17 @@ def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
                                 pdfrw.PdfDict(V='{}'.format(data_dict[key]))
                             )
     pdfrw.PdfWriter().write(output_pdf_path, template_pdf)
-
+ 
+def signaturemerger(path, signature, output):
+    base_pdf = pdfrw.PdfReader(path)
+    signature_pdf = pdfrw.PdfReader(signature)
+    mark = signature_pdf.pages[0]
+    
+    merger = pdfrw.PageMerge(base_pdf.pages[2])
+    merger.add(mark).render()
+ 
+    writer = pdfrw.PdfWriter()
+    writer.write(output, base_pdf)
 
 phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
 

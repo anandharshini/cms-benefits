@@ -35,7 +35,7 @@
     }
 
     function submitSignature(ev) {
-        const data = signaturePad.toData();
+        const data = signaturePad.toDataURL();
         document.getElementsByName('sign_data')[0].value = data;
         //document.getElementById('signForm').submit();
     }
