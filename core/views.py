@@ -13,7 +13,7 @@ from django.conf import settings
 from healthquestionaire.views import get_employee_instance
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
-from core.utils import signaturemerger
+from core.utils import signaturemerger, calculateAge
 
 
 def signup(request):
@@ -68,6 +68,7 @@ def create_dependents_model_form(request):
             if employee:
                 saved_data = form.save(commit=False)
                 saved_data.employee = employee
+                saved_data.age = calculateAge(saved_data.dob_dependent)
                 saved_data.save()
                 print(saved_data)
             return redirect(''.join([settings.PREFIX_URL,'dependents/?toolbar_off&employee=', str(employee.id)]))

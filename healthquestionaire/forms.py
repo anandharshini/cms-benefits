@@ -40,7 +40,7 @@ class EmployeeModelForm(forms.ModelForm):
 class CoverageForm(forms.ModelForm):    
     class Meta:
         model = CoverageModel
-        exclude = ()
+        exclude = ('employee',)
         widgets = {
             'effective_date': forms.DateInput(attrs={'class': 'datepicker'}),
             # 'tobacco_use': forms.RadioSelect,

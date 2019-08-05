@@ -172,18 +172,21 @@ def employeeview(request):
     return render(request,'healthquestionaire/employee_form.html',{'form': form, 'back_url': settings.PREFIX_URL})
 
 def coverageview(request):
-    employee_id = request.GET.get('employee', None)
+    employee = get_employee_instance(request.user, request.GET.get('employee', None))
     if request.method == 'POST':
         print('POST FORM coverage', request.POST)
         try:
-            coverage = get_object_or_404(CoverageModel, employee=employee_id)
+            coverage = get_object_or_404(CoverageModel, employee=employee)
             form = CoverageForm(request.POST, instance=coverage)
         except Http404:
             form = CoverageForm(request.POST)
         if form.is_valid():
-            saved_data = form.save()
+            if employee:
+                saved_data = form.save(commit=False)
+                saved_data.employee = employee
+                saved_data.save()
             # print(saved_data)
-            return redirect(''.join([settings.PREFIX_URL, 'dependents/?toolbar_off&employee=', employee_id]))
+            return redirect(''.join([settings.PREFIX_URL, 'dependents/?toolbar_off&employee=', str(employee.id)]))
         else:
             print(form.errors)
 
@@ -191,13 +194,13 @@ def coverageview(request):
     if request.GET.get('employee', None):
         print('testing')
         try:
-            coverage = get_object_or_404(CoverageModel, employee=employee_id)
+            coverage = get_object_or_404(CoverageModel, employee=employee)
             form = CoverageForm(instance=coverage)
         except Http404:
-            form = CoverageForm(initial={'employee': employee_id})
+            form = CoverageForm(initial={'employee': employee})
     else:
         return redirect(''.join([settings.PREFIX_URL, 'employee/create/?toolbar_off']))
-    return render(request,'healthquestionaire/coverage_form.html',{'form': form, 'back_url': '%semployee/create/?toolbar_off&id=%s' %(settings.PREFIX_URL, employee_id if employee_id else coverage.employee.id)})
+    return render(request,'healthquestionaire/coverage_form.html',{'form': form, 'back_url': '%semployee/create/?toolbar_off&id=%s' %(settings.PREFIX_URL, employee.id if employee else coverage.employee.id)})
 
 def dependentinfoview(request):
     employee_id=request.GET.get('employee', None)

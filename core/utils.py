@@ -3,6 +3,7 @@ import pdfrw
 from django.core.validators import RegexValidator
 from django import forms
 from django import template
+from datetime import date 
 
 register = template.Library()
 
@@ -40,7 +41,12 @@ def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
                                 pdfrw.PdfDict(V='{}'.format(data_dict[key]))
                             )
     pdfrw.PdfWriter().write(output_pdf_path, template_pdf)
- 
+  
+def calculateAge(birthDate): 
+    today = date.today() 
+    age = today.year - birthDate.year - ((today.month, today.day) < (birthDate.month, birthDate.day)) 
+    return age 
+
 def signaturemerger(path, signature, output):
     base_pdf = pdfrw.PdfReader(path)
     signature_pdf = pdfrw.PdfReader(signature)

@@ -14,11 +14,11 @@
         {% for form in formset %}
             {{ form.as_p }}        
         {% endfor %}
-       
+        <center>
+                <button type="submit" class="btn btn-block btn-primary">SAVE NEW ENTRY</button>
+        </center>
     </form>
-    <center>
-            <button type="submit" class="btn btn-block btn-primary">SAVE NEW ENTRY</button>
-    </center>
+    
     {% if medical_list %}
     <table class="striped" style="font-size: 10pt;">
         <tr>
