@@ -4,40 +4,52 @@
 
 {% block content %}
 <div class="container">
-    <div class="section">
-        Dependent Information
-    </div>
+    <h4>
+        Health Information Detail
+    </h4>
+    <p>If you answer “Yes” to any of the previous Health History questions, please provide detail in form provided below.</p>
     <form class="form-horizontal" method="POST" action="">
         {% csrf_token %}
         {{ formset.management_form }}
         {% for form in formset %}
             {{ form.as_p }}        
         {% endfor %}
-        <div class="row">
-            {% if back_url %}
-                <div class="col s4">
-                    <a href="{{ back_url }}" class="btn">Back</a>
-                </div>
-            {% endif %}
-            <div class="col s4">
-                <button type="submit" class="btn btn-block btn-primary">Create</button>
-            </div>
-            <div class="col s4">
-                <a class="waves-effect waves-light btn" href="{{PREFIX_URL}}medications/?employee={{ request.GET.employee }}">Next</a>
-            </div>
-        </div>
+        
     </form>
-    <table class="striped">
+    <center>
+            <button type="submit" class="btn btn-block btn-primary">SAVE NEW ENTRY</button>
+    </center>
+    {% if medical_list %}
+    <table class="striped" style="font-size: 10pt;">
         <tr>
             <th>Family Member</th>
             <th>Disease/Diagnose/Treatment</th>
+            <th>Date of Onset</th>
+            <th>Date Last Seen by Physician</th>
+            <th>Remaining Symptoms or Problems</th>
         </tr>
         {% for med in medical_list %}
             <tr>
                 <td>{{med.family_member}}</td>
                 <td>{{med.disease_diag_treat}}</td>
+                <td>{{med.date_of_onset}}</td>
+                <td>{{med.date_last_seen}}</td>
+                <td>{{med.remaining_symp_probs}}</td>
             </tr>
         {% endfor %}
     </table>
+    {% endif %}
+    <br>
+    <div class="row">
+            {% if back_url %}
+                <div class="col s10">
+                    <a href="{{ back_url }}" class="btn">Back</a>
+                </div>
+            {% endif %}
+            
+            <div class="col s2">
+                <a class="waves-effect waves-light btn" href="{{PREFIX_URL}}medications/?employee={{ request.GET.employee }}">Next</a>
+            </div>
+        </div>
 </div>
 {% endblock %}
