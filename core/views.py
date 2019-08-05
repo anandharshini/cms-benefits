@@ -13,7 +13,7 @@ from django.conf import settings
 from healthquestionaire.views import get_employee_instance
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
-from core.utils import signaturemerger, calculateAge
+from core.utils import signaturemerger, calculateAge, create_pdf_files
 
 
 def signup(request):
@@ -83,7 +83,7 @@ def create_dependents_model_form(request):
         {
             'form': form, 
             'back_url': ''.join([settings.PREFIX_URL,'coverage/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
-            'next_url': ''.join([settings.PREFIX_URL,'medicals/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
+            'next_url': ''.join([settings.PREFIX_URL,'medications/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
             'employee_depedents': EmployeeDependent.objects.filter(employee=employee),
             'heading': heading_message,
             'PREFIX_URL': settings.PREFIX_URL,
@@ -97,7 +97,7 @@ def signatureview(request):
         print('Signature', request.POST)
         form = SignatureForm(request.POST)
         if employee:
-
+            create_pdf_files(employee.id)
             sign_file = ''.join(['media/submitted/', str(employee.id), '_signature.pdf'])
             c = canvas.Canvas(sign_file)
             c.drawImage(request.POST['sign_data'], 10, 10, mask='auto')
