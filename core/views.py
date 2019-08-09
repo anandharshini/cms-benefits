@@ -93,6 +93,7 @@ def create_dependents_model_form(request):
 def signatureview(request):
     employee = get_employee_instance(request.user, request.GET.get('employee', None))
     heading_message = 'Signature'
+    signed_file = ''
     if request.method == 'POST':
         print('Signature', request.POST)
         form = SignatureForm(request.POST)
@@ -115,6 +116,7 @@ def signatureview(request):
     return render(request,'healthquestionaire/done.html',
         {
             'form': form, 
+            'signed_pdf_file': ''.join(['/media/submitted/', str(employee.id), '_signed.pdf']) if signed_file != '' else '',
             'heading': heading_message,
             'PREFIX_URL': settings.PREFIX_URL,
         })

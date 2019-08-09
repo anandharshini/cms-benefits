@@ -61,6 +61,7 @@ def signaturemerger(path, signature, output):
 
 phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
 
+height_regex = RegexValidator(regex=r'^d{1}\'d{012}\"$', message="Height(X'-XX\")" )
 # def base_create_view(request, **kwargs):
 #     if request.method == 'POST':
 #         for key, value in kwargs.items():
