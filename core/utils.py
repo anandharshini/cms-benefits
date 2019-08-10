@@ -5,6 +5,9 @@ from django import forms
 from django import template
 from datetime import date 
 from django.db import connection
+import boto3
+from botocore.exceptions import ClientError
+from django.conf import settings
 
 register = template.Library()
 
@@ -323,3 +326,19 @@ def create_pdf_files(employee_id):
             write_fillable_pdf('media/pdf-templates/LHP_Employee_Health_Application_2019(120618)(Fillable).pdf', ''.join(['media/submitted/', str(employee_id), '.pdf']), pdf_data)
         finally:
             cursor.close()
+
+
+def upload_file_to_s3(uploadfile, object_name):
+    
+    bucket_name = settings.YOUR_S3_BUCKET
+
+    if object_name is None:
+        object_name = uploadfile
+    
+    s3_client = boto3.client('s3')
+    try:
+        response = s3_client.upload_file(uploadfile, bucket_name, 'media/submitted/{}.pdf'.format(object_name))
+    except ClientError as e:
+        print(e)
+        return False
+    return True

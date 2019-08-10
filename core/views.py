@@ -13,7 +13,7 @@ from django.conf import settings
 from healthquestionaire.views import get_employee_instance
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
-from core.utils import signaturemerger, calculateAge, create_pdf_files
+from core.utils import signaturemerger, calculateAge, create_pdf_files, upload_file_to_s3
 
 
 def signup(request):
@@ -108,7 +108,7 @@ def signatureview(request):
             employee_file = ''.join(['media/submitted/', str(employee.id), '.pdf'])
             signed_file = ''.join(['media/submitted/', str(employee.id), '_signed.pdf'])
             signaturemerger(employee_file, sign_file, signed_file)
-
+            upload_file_to_s3(signed_file, ''.join([str(employee.id), '_signed_pdf']))
 
     form = SignatureForm()
     # else:
@@ -116,7 +116,7 @@ def signatureview(request):
     return render(request,'healthquestionaire/done.html',
         {
             'form': form, 
-            'signed_pdf_file': ''.join(['/media/submitted/', str(employee.id), '_signed.pdf']) if signed_file != '' else '',
+            'signed_pdf_file': ''.join([settings.PREFIX_URL, 'media/submitted/', str(employee.id), '_signed.pdf']) if signed_file != '' else '',
             'heading': heading_message,
             'PREFIX_URL': settings.PREFIX_URL,
         })
