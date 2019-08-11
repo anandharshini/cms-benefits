@@ -228,6 +228,8 @@ THUMBNAIL_PROCESSORS = (
 
 YOUR_S3_BUCKET = "zappa-cms-static"
 
+SIGNED_PDF_BUCKET = "benefits-signed-pdf"
+
 STATICFILES_STORAGE = "django_s3_storage.storage.StaticS3Storage"
 AWS_S3_BUCKET_NAME_STATIC = YOUR_S3_BUCKET
 

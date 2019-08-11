@@ -13,7 +13,7 @@ from django.conf import settings
 from healthquestionaire.views import get_employee_instance
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
-from core.utils import signaturemerger, calculateAge
+from core.utils import signaturemerger, calculateAge, create_pdf_files, upload_file_to_s3
 
 
 def signup(request):
@@ -83,7 +83,7 @@ def create_dependents_model_form(request):
         {
             'form': form, 
             'back_url': ''.join([settings.PREFIX_URL,'coverage/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
-            'next_url': ''.join([settings.PREFIX_URL,'medicals/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
+            'next_url': ''.join([settings.PREFIX_URL,'medications/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
             'employee_depedents': EmployeeDependent.objects.filter(employee=employee),
             'heading': heading_message,
             'PREFIX_URL': settings.PREFIX_URL,
@@ -93,21 +93,26 @@ def create_dependents_model_form(request):
 def signatureview(request):
     employee = get_employee_instance(request.user, request.GET.get('employee', None))
     heading_message = 'Signature'
+    signed_file = ''
+    error = None
     if request.method == 'POST':
         print('Signature', request.POST)
         form = SignatureForm(request.POST)
         if employee:
-
-            sign_file = ''.join(['media/submitted/', str(employee.id), '_signature.pdf'])
-            c = canvas.Canvas(sign_file)
-            c.drawImage(request.POST['sign_data'], 10, 10, mask='auto')
-            c.showPage()
-            c.save()
-
-            employee_file = ''.join(['media/submitted/', str(employee.id), '.pdf'])
-            signed_file = ''.join(['media/submitted/', str(employee.id), '_signed.pdf'])
-            signaturemerger(employee_file, sign_file, signed_file)
-
+            try:
+                create_pdf_files(employee.id)
+                sign_file = ''.join(['media/submitted/', str(employee.id), '_signature.pdf'])
+                c = canvas.Canvas(sign_file)
+                c.drawImage(request.POST['sign_data'], 10, 10, mask='auto')
+                c.showPage()
+                c.save()
+                
+                employee_file = ''.join(['media/submitted/', str(employee.id), '.pdf'])
+                signed_file = ''.join(['media/submitted/', str(employee.id), '_signed.pdf'])
+                signaturemerger(employee_file, sign_file, signed_file)
+                upload_file_to_s3(signed_file, ''.join([str(employee.id), '_signed_pdf']))
+            except Exception as ex:
+                error = ex
 
     form = SignatureForm()
     # else:
@@ -115,6 +120,8 @@ def signatureview(request):
     return render(request,'healthquestionaire/done.html',
         {
             'form': form, 
+            'signed_pdf_file': ''.join([settings.PREFIX_URL, 'media/submitted/', str(employee.id), '_signed.pdf']),
             'heading': heading_message,
             'PREFIX_URL': settings.PREFIX_URL,
+            'error_status': error
         })

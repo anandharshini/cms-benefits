@@ -4,7 +4,7 @@ from employer.models import Employer
 from django.contrib.auth.models import User
 from django.contrib.admin import widgets
 from django.forms import formset_factory 
-from core.utils import CombinedFormBase
+from core.utils import CombinedFormBase, height_regex
 from employer.forms import EmployerForm
 from core.models import Address, EmployeeDependent, LookupModel
 from django.forms import modelformset_factory
@@ -73,7 +73,10 @@ class EmployeeAddressForm(CombinedFormBase):
 class DependentInfoForm(forms.ModelForm):
     class Meta:
         model = DependentInfoModel
-        exclude=()
+        exclude=('employee',)
+        widgets = {
+            'self_height_feet': forms.TextInput(attrs={'class': 'masked', 'pattern': '^(\d{1,2})[\']?((\d)|([0-1][0-2]))?[\"]?$', 'placeholder': 'd\'dd\"'})
+        }
 
     def __init__(self, *args, **kwargs):
         super(DependentInfoForm, self).__init__(*args, **kwargs)
