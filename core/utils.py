@@ -131,6 +131,20 @@ class CombinedFormBase(forms.Form):
             cleaned_data.update(form.cleaned_data)
         return cleaned_data
 
+def check_signed_file_exists(employee_id):
+    bucket_name = settings.YOUR_S3_BUCKET
+    client = boto3.client('s3')
+    s3_key = ''.join(['media/submitted/', str(employee_id), '_signed_pdf.pdf'])
+    bucket = settings.YOUR_S3_BUCKET
+    try:
+        content = client.head_object(Bucket=bucket,Key=s3_key)
+        if content.get('ResponseMetadata',None) is not None:
+            return True
+        else:
+            return False
+    except Exception as ex:
+        return False
+
 def create_pdf_files(employee_id):
     pdf_data = {}
     with connection.cursor() as cursor:
