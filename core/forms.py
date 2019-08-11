@@ -28,9 +28,11 @@ class EmployeeDependentForm(forms.ModelForm):
     class Meta:
         model = EmployeeDependent
         exclude=('employee','age',)
-        # widgets = {
-        #     'tobacco_use': forms.CheckboxInput(attrs={ 'style': 'width:50px; height: 50px;' }),
-        # }
+        widgets = {
+             'ssn': forms.TextInput(attrs={'class': 'masked', 'pattern': '^([1-9])(?!\1{2}-\1{2}-\1{4})[1-9]{2}-[1-9]{2}-[1-9]{4}$', 'placeholder': '999-99-9999'}),
+             'dob_dependent': forms.TextInput(attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/dd/yyyy'})
+        }
+        # 'tobacco_use': forms.CheckboxInput(attrs={ 'style': 'width:50px; height: 50px;' }),
     
     def __init__(self, *args, **kwargs):
         super(EmployeeDependentForm, self).__init__(*args, **kwargs)

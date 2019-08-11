@@ -20,13 +20,21 @@ class AddressModelForm(forms.ModelForm):
         self.fields['address_type'].queryset = LookupModel.objects.filter(type_lookup='address_type')
 
 class EmployeeModelForm(forms.ModelForm):
+    # empl_dob = DateField(input_formats=settings.DATE_INPUT_FORMATS)
+    # empl_hire_date = DateField(input_formats=settings.DATE_INPUT_FORMATS)
     class Meta:
         model = EmployeeModel
         exclude = ('all_forms_complete', 'login_user', 'current_url', 'form_type',)
         # fields = ('')
         widgets = {
-            'empl_hire_date': forms.DateInput(attrs={'class': 'datepicker'}),
-             'empl_dob': forms.DateInput(attrs={'class': 'datepicker'})
+            #  'empl_hire_date': forms.DateInput(attrs={'class': 'datepicker'}),
+            #  'empl_dob': forms.DateInput(attrs={'class': 'datepicker'}),
+             'empl_ssn': forms.TextInput(attrs={'class': 'masked', 'pattern': '^([1-9])(?!\1{2}-\1{2}-\1{4})[1-9]{2}-[1-9]{2}-[1-9]{4}$', 'placeholder': '999-99-9999'}),
+             'zip_code': forms.TextInput(attrs={'class': 'masked', 'pattern': '^\d{5}-\d{4}|\d{5}|[A-Z]\d[A-Z] \d[A-Z]\d$', 'placeholder': '99999-9999'}),
+             'home_phone': forms.TextInput(attrs={'class': 'masked', 'pattern': '^[2-9]\d{2}-\d{3}-\d{4}$', 'placeholder': '999-999-9999'}),
+             'cell_phone': forms.TextInput(attrs={'class': 'masked', 'pattern': '^[2-9]\d{2}-\d{3}-\d{4}$', 'placeholder': '999-999-9999'}),
+             'empl_dob': forms.DateInput(attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/dd/yyyy'}),
+             'empl_hire_date': forms.DateInput(attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/dd/yyyy'})
             #'empl_dob': forms.DateTimeField(input_formats=['%d/%m/%y'])
                     }
     
@@ -73,9 +81,12 @@ class EmployeeAddressForm(CombinedFormBase):
 class DependentInfoForm(forms.ModelForm):
     class Meta:
         model = DependentInfoModel
-        exclude=('employee',)
+        exclude=('employee', 'self_height_inches', 'spouse_height_inches')
         widgets = {
-            'self_height_feet': forms.TextInput(attrs={'class': 'masked', 'pattern': '^(\d{1,2})[\']?((\d)|([0-1][0-2]))?[\"]?$', 'placeholder': 'd\'dd\"'})
+            'self_height_feet': forms.TextInput(attrs={'class': 'masked', 'pattern': '^(\d{1,2})[\']?((\d)|([0-1][0-2]))?[\"]?$', 'placeholder': '9\'99\"'}),
+            'spouse_height_feet': forms.TextInput(attrs={'class': 'masked', 'pattern': '^(\d{1,2})[\']?((\d)|([0-1][0-2]))?[\"]?$', 'placeholder': '9\'99\"'}), 
+            'self_weight_lbs': forms.TextInput(attrs={'class': 'masked', 'pattern': '^[0-9][0-9][0-9]$', 'placeholder': '999'}),
+            'spouse_weight_lbs': forms.TextInput(attrs={'class': 'masked', 'pattern': '^[0-9][0-9][0-9]$', 'placeholder': '999'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -102,7 +113,11 @@ MedicationModelFormset = modelformset_factory(
 class MedicalModelForm(forms.ModelForm):
     class Meta:
         model = MedicalModel
-        exclude=()
+        exclude = ()
+        widgets = {
+            'date_of_onset': forms.DateInput(attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/yyyy'}),
+            'date_last_seen': forms.DateInput(attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/yyyy'})
+        }
     
     def __init__(self, *args, **kwargs):
         pass

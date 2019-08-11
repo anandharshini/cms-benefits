@@ -3,32 +3,46 @@
 {% load i18n %}
 
 {% block content %}
-<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
-<h1>Done submitting. Go back to Home Page <a href="{{PREFIX_URL}}?toolbar_off">Home</a></h1>
 
+<div class="container">
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+<h4>AGREEMENTS, AUTHORIZATION & ATTESTATION</h4>
+<p>Please review your completed application below.  Once all provided information is complete and accurate, please read section 7 at the end of the PDF and sign using the signature card below.
+    </p>
 <div class="row">
-    <div class="col s12 m6">
-        <embed src="{{ signed_pdf_file }}" width="600" height="500" alt="pdf" pluginspage="https://www.adobe.com/products/acrobat/readstep2.html">
+    <div class="col s12">
+        <embed src="{{ signed_pdf_file }}" width="100%" height="700" alt="pdf" pluginspage="https://www.adobe.com/products/acrobat/readstep2.html">
     </div>
-    <div class="col s12 m6">
+    <div class="col s12">
         <form id="signForm" method="POST" action="">
             {% csrf_token %}
-            <div class="card blue-grey darken-1">
-                {{ form.as_p }}
-                <div class="card-content white-text">
-                    <span class="card-title">Sign Below</span>
-                    <canvas width="auto"></canvas>
-                </div>
+            <div class="card grey darken-1" style="padding-bottom:0px;" width="100%">
+                <!-- {{ form.as_p }} -->
+                <div class="card-content white-text" style="padding-bottom:0px;" width="100%">
+                    <span class="card-title">Signature Card</span>
+                                <canvas width="800"></canvas>
+
+                </div> 
+               
                 <div class="card-action">
-                    <button onclick="clearSignature()" class="btn">Clear</button>
-                    <button onclick="submitSignature()" class="btn">Submit</button>
+                    <button onclick="clearSignature()" class="btn"  style="background-color:#992A43;">Clear</button>
+                    <button onclick="submitSignature()" class="btn"  style="background-color:#992A43;">Submit</button>
                 </div>
             </div>                
         </form>
     </div>
 </div>
-
-
+<br><br>
+<div class="row">
+        <div class="col s11">
+            <a class="waves-effect waves-light btn" href="{{PREFIX_URL}}medicals/?employee={{ request.GET.employee }}">Back</a>
+        </div>
+       
+        <div class="col s1">
+            <a class="waves-effect waves-light btn" href="{{PREFIX_URL}}?toolbar_off">Finish</a>
+        </div>
+    </div>
+</div>
 <script>
     var canvas = document.querySelector("canvas");
     var signaturePad = new SignaturePad(canvas);

@@ -4,6 +4,11 @@
 
 {% block content %}
 <div class="container">
+        {% if heading %}
+        <h4>{{ heading }}</h4>
+        <p>{{ heading_direction }}</p>
+        {% endif %}
+        
     <form class="form-horizontal" method="POST" action="">
         {% csrf_token %}
         <div class="row">
@@ -84,15 +89,16 @@
             {% endfor %}
         </div>
         <div class="row">
-                <div class="col s10">
+                <div class="col s11">
 
             {% if back_url %}
                     <a href="{{ back_url }}" class="btn">Back</a>
                
             {% endif %}
         </div>
-            <div class="col s2">
-                <button type="submit" class="btn btn-block btn-primary">Next</button>
+            <div class="col s1">
+                <!--    <a href="{{ next_url }}" class="btn">Next</a>-->
+                 <button type="submit" class="btn btn-block btn-primary">Next</button> 
             </div>
         </div>
     </form>
@@ -104,9 +110,43 @@
         var elems = document.querySelectorAll('.datepicker');
         var instances = M.Datepicker.init(elems, {'format': 'mm/dd/yyyy', 'changeMonth': true,
         'changeYear': true,
-        'yearRange': '1900:2012'});
+        'yearRange': '1900:2020'});
     });
+
+    
 </script>
 
 <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/masking-input.js" data-autoinit="true"></script>
+
+<style>
+
+
+
+.shell {
+  position: relative;
+  line-height: 1; }
+  .shell span {
+    position: absolute;
+    left: 3px;
+    top: 1px;
+    color: #ccc;
+    pointer-events: none;
+    z-index: -1; }
+    .shell span i {
+      font-style: normal;
+      /* any of these 3 will work */
+      color: transparent;
+      opacity: 0;
+      visibility: hidden; }
+
+input.masked,
+.shell span {
+  font-size: 16px;
+  font-family: monospace;
+  padding-right: 10px;
+  background-color: transparent;
+  text-transform: uppercase; }
+
+</style>
+
 {% endblock %}

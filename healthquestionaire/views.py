@@ -31,7 +31,8 @@ def get_employee_instance(user, employee_id):
         
 def create_medical_model_form(request):
     template_name = 'medical_formset.html'
-    heading_message = 'Medical Form'
+    heading_message = 'Health Information Details'
+    heading_direction = 'If you answer “Yes” to any of the previous Health History questions, please provide detail in form provided below.'
     employee = get_employee_instance(request.user, request.GET.get('employee', None))
     
     if request.method == 'GET':
@@ -49,15 +50,17 @@ def create_medical_model_form(request):
             return redirect(''.join([settings.PREFIX_URL, 'medicals/?toolbar_off&employee=', str(employee.id)]))
     return render(request, template_name, {
             'formset': formset,
-            'back_url': ''.join([settings.PREFIX_URL,'medications/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
+            'back_url': ''.join([settings.PREFIX_URL,'dependentinfo/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
             'medical_list': MedicalModel.objects.filter(employee=employee),
             'heading': heading_message,
+            'heading_direction': heading_direction,
             'PREFIX_URL': settings.PREFIX_URL,
         })
 
 def create_medication_model_form(request):
     template_name = 'medication_formset.html'
-    heading_message = 'Medication Form'
+    heading_message = 'Medication List'
+    heading_direction = 'Please list any medications, prescriptions, or injections taken in the last 12 months'
     employee = get_employee_instance(request.user, request.GET.get('employee', None))
     
     if request.method == 'GET':
@@ -78,6 +81,7 @@ def create_medication_model_form(request):
             'back_url': ''.join([settings.PREFIX_URL,'dependents/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
             'medical_list': MedicationModel.objects.filter(employee=employee),
             'heading': heading_message,
+            'heading_direction': heading_direction,
             'PREFIX_URL': settings.PREFIX_URL,
         })
 
@@ -138,6 +142,8 @@ class CoverageModelCreateView(CreateView):
     
 def employeeview(request):
     employer_id = request.GET.get('employer', None)
+    heading_message = 'Employee Information'
+    heading_direction = 'Please complete all details below.'
     user = request.user
     if request.method == 'POST':
         try:
@@ -169,10 +175,12 @@ def employeeview(request):
             form = EmployeeModelForm(instance=employee)
         except Http404:
             form = EmployeeModelForm(initial={ 'login_user': request.user, 'all_forms_completed': False})
-    return render(request,'healthquestionaire/employee_form.html',{'form': form, 'back_url': settings.PREFIX_URL})
+    return render(request,'healthquestionaire/employee_form.html',{'form': form, 'heading': heading_message, 'heading_direction': heading_direction, 'back_url': settings.PREFIX_URL})
 
 def coverageview(request):
     employee = get_employee_instance(request.user, request.GET.get('employee', None))
+    heading_message = 'Insurance Coverage'
+    heading_direction = 'Please complete aplicable fields below.'
     if request.method == 'POST':
         print('POST FORM coverage', request.POST)
         try:
@@ -200,10 +208,12 @@ def coverageview(request):
             form = CoverageForm(initial={'employee': employee})
     else:
         return redirect(''.join([settings.PREFIX_URL, 'employee/create/?toolbar_off']))
-    return render(request,'healthquestionaire/coverage_form.html',{'form': form, 'back_url': '%semployee/create/?toolbar_off&id=%s' %(settings.PREFIX_URL, employee.id if employee else coverage.employee.id)})
+    return render(request,'healthquestionaire/coverage_form.html',{'form': form, 'heading': heading_message, 'heading_direction': heading_direction, 'back_url': '%semployee/create/?toolbar_off&id=%s' %(settings.PREFIX_URL, employee.id if employee else coverage.employee.id)})
 
 def dependentinfoview(request):
     employee = get_employee_instance(request.user, request.GET.get('employee', None))
+    heading_message = 'Health Information'
+    heading_direction = 'Please provide height and weight for you and your spouse and answer the following health questions regarding any medical conditions or medical treatment for you and your family.'
     if request.method == 'POST':
         try:
             form = DependentInfoForm(request.POST, instance=employee)
@@ -236,4 +246,12 @@ def dependentinfoview(request):
             form = DependentInfoForm(initial={'employee': employee})
     else:
         form = DependentInfoForm()
-    return render(request,'healthquestionaire/dependentinfo_form.html',{'form': form, 'back_url': '%smedications/?toolbar_off&employee=%s' %(settings.PREFIX_URL, employee.id)})
+    return render(request,'healthquestionaire/dependentinfo_form.html',
+        {
+            'form': form, 
+            'heading': heading_message, 
+            'heading_direction': heading_direction, 
+            'back_url': '%smedications/?toolbar_off&employee=%s' %(settings.PREFIX_URL, employee.id),
+        })
+
+        # 'next_url': '%smedicals/?toolbar_off&employee=%s' %(settings.PREFIX_URL, employee.id)

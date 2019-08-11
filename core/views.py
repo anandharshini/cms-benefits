@@ -60,7 +60,8 @@ def activate(request, uidb64, token):
 
 def create_dependents_model_form(request):
     employee = get_employee_instance(request.user, request.GET.get('employee', None))
-    heading_message = 'Dependents'
+    heading_message = 'Dependent Information'
+    heading_direction = 'Please add all participating dependents'
     if request.method == 'POST':
         print('POST FORM Employee Dependent', request.POST)
         form = EmployeeDependentForm(request.POST)
@@ -86,6 +87,7 @@ def create_dependents_model_form(request):
             'next_url': ''.join([settings.PREFIX_URL,'medications/?toolbar_off&employee=', str(request.GET.get('employee', ''))]),
             'employee_depedents': EmployeeDependent.objects.filter(employee=employee),
             'heading': heading_message,
+            'heading_direction': heading_direction,
             'PREFIX_URL': settings.PREFIX_URL,
         })
 

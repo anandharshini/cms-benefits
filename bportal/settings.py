@@ -40,8 +40,8 @@ ALLOWED_HOSTS = ['gknh9vvk3h.execute-api.us-west-2.amazonaws.com', '127.0.0.1']
 
 ROOT_URLCONF = 'bportal.urls'
 
-
-
+DATE_INPUT_FORMATS = ['%m/%d/%Y']
+DATE_FORMAT = "%m/%d/%Y"
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -241,4 +241,5 @@ STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
 # OR...if you create a fancy custom domain for your static files use:
 #AWS_S3_PUBLIC_URL_STATIC = "https://static.zappaguide.com/"
 
-PREFIX_URL = '/dev/'
+#PREFIX_URL = '/dev/'
+PREFIX_URL = '/'
