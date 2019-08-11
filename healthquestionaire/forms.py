@@ -26,7 +26,11 @@ class EmployeeModelForm(forms.ModelForm):
         # fields = ('')
         widgets = {
             'empl_hire_date': forms.DateInput(attrs={'class': 'datepicker'}),
-             'empl_dob': forms.DateInput(attrs={'class': 'datepicker'})
+             'empl_dob': forms.DateInput(attrs={'class': 'datepicker'}),
+             'empl_ssn': forms.TextInput(attrs={'class': 'masked', 'pattern': '^([1-9])(?!\1{2}-\1{2}-\1{4})[1-9]{2}-[1-9]{2}-[1-9]{4}', 'placeholder': '999-99-9999'}),
+             'home_phone': forms.TextInput(attrs={'class': 'masked', 'pattern': '^([1-9])(?!\1{2}-\1{2}-\1{4})[1-9]{3}-[1-9]{2}-[1-9]{4}', 'placeholder': '999-999-9999'}),
+             'cell_phone': forms.TextInput(attrs={'class': 'masked', 'pattern': '^([1-9])(?!\1{2}-\1{2}-\1{4})[1-9]{3}-[1-9]{2}-[1-9]{4}', 'placeholder': '999-999-9999'}),
+             'email_address': forms.EmailInput()
             #'empl_dob': forms.DateTimeField(input_formats=['%d/%m/%y'])
                     }
     
@@ -73,9 +77,10 @@ class EmployeeAddressForm(CombinedFormBase):
 class DependentInfoForm(forms.ModelForm):
     class Meta:
         model = DependentInfoModel
-        exclude=('employee',)
+        exclude=('employee', 'self_height_inches', 'spouse_height_inches',)
         widgets = {
-            'self_height_feet': forms.TextInput(attrs={'class': 'masked', 'pattern': '^(\d{1,2})[\']?((\d)|([0-1][0-2]))?[\"]?$', 'placeholder': 'd\'dd\"'})
+            'self_height_feet': forms.TextInput(attrs={'class': 'masked', 'pattern': '^(\d{1,2})[\']?((\d)|([0-1][0-2]))?[\"]?$', 'placeholder': 'd\'dd\"'}),
+            'spouse_height_feet': forms.TextInput(attrs={'class': 'masked', 'pattern': '^(\d{1,2})[\']?((\d)|([0-1][0-2]))?[\"]?$', 'placeholder': 'd\'dd\"'})
         }
 
     def __init__(self, *args, **kwargs):

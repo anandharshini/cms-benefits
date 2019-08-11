@@ -126,7 +126,7 @@ class DependentInfoModel(models.Model):
         hospitalization or surgery not yet performed for any condition, if you fail to disclose any previous treatment, diagnosis, recommendation
         of hospitalization or surgery not yet performed for a condition listed below, the health plan will not cover any medical expenses, diagnosis,
         treatment, services, supplies, surgeries or hospitalizations for that undisclosed condition related or attributable, to the coverage sought
-        as part of this application. NOTE: You are required to disclose any updates to these health questions that may arise prior to the effective date of your coverage"""))
+        as part of this application. NOTE: You are required to disclose any updates to these health questions that may arise prior to the effective date of your coverage"""), blank=True)
     past_5_insu_decl = models.ForeignKey("core.LookupModel", related_name='dep_past_5_ins_decl', verbose_name=_("""Within the past 5 years, have you or any dependent ever had an application for insurance declined, postponed,
         rated or otherwise modified?"""), on_delete=models.CASCADE)
     past_24_med_cond = models.ForeignKey("core.LookupModel", related_name='dep_past_24_med_cond', verbose_name=_("""Have you or any of your dependent(s) had any medical conditions in the past 24 months requiring medical care,
