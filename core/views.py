@@ -98,30 +98,36 @@ def signatureview(request):
     signed_file = ''
     error = None
     if request.method == 'POST':
-        print('Signature', request.POST)
+        # print('Signature', request.POST)
         form = SignatureForm(request.POST)
         if employee:
             try:
                 create_pdf_files(employee.id)
-                sign_file = ''.join(['media/submitted/', str(employee.id), '_signature.pdf'])
+                sign_file = ''.join(['tmp/', str(employee.id), '_signature.pdf'])
                 c = canvas.Canvas(sign_file)
                 c.drawImage(request.POST['sign_data'], 10, 10, mask='auto')
                 c.showPage()
                 c.save()
                 
-                employee_file = ''.join(['media/submitted/', str(employee.id), '.pdf'])
-                signed_file = ''.join(['media/submitted/', str(employee.id), '_signed.pdf'])
+                employee_file = ''.join(['tmp/', str(employee.id), '.pdf'])
+                if employee and not check_signed_file_exists(employee.id):
+                    upload_file_to_s3(''.join(['tmp/', str(employee.id), '.pdf']), ''.join([str(employee.id)]))
+                signed_file = ''.join(['tmp/', str(employee.id), '_signed.pdf'])
                 signaturemerger(employee_file, sign_file, signed_file)
                 upload_file_to_s3(signed_file, ''.join([str(employee.id), '_signed_pdf']))
             except Exception as ex:
                 error = ex
 
     form = SignatureForm()
-
+    try:
+        if employee and not check_signed_file_exists(employee.id):
+            upload_file_to_s3(''.join(['tmp/', str(employee.id), '.pdf']), ''.join([str(employee.id)]))
+    except Exception as ex:
+        error = ex
     return render(request,'healthquestionaire/done.html',
         {
             'form': form, 
-            'signed_pdf_file': ''.join([settings.PREFIX_URL, 'media/submitted/', str(employee.id), '_signed.pdf' if check_signed_file_exists(employee.id) else '.pdf']),
+            'signed_pdf_file': ''.join([settings.S3_MEDIA_URL, str(employee.id), '_signed_pdf.pdf' if check_signed_file_exists(employee.id) else '.pdf']),
             'heading': heading_message,
             'PREFIX_URL': settings.PREFIX_URL,
             'error_status': error

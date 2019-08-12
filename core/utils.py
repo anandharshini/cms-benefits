@@ -29,7 +29,14 @@ WIDGET_SUBTYPE_KEY = '/Widget'
 
 
 def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
-    template_pdf = pdfrw.PdfReader(input_pdf_path)
+    try:
+        s3_client = boto3.client('s3', aws_access_key_id=settings.ACCESS_KEY, aws_secret_access_key=settings.SECRET_KEY)
+        s3_response_object = s3_client.get_object(Bucket=settings.YOUR_S3_BUCKET, Key='media/pdf-templates/LHP_Employee_Health_Application_2019(120618)(Fillable).pdf')
+        object_content = s3_response_object['Body'].read()
+        template_pdf = pdfrw.PdfReader(fdata=object_content)
+    except Exception as ex:
+        print(ex)
+    
     for page in template_pdf.pages:
         annotations = page[ANNOT_KEY]
         for annotation in annotations:
@@ -44,7 +51,10 @@ def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
                             annotation.update(
                                 pdfrw.PdfDict(V='{}'.format(data_dict[key]))
                             )
-    pdfrw.PdfWriter().write(output_pdf_path, template_pdf)
+    try:
+        pdfrw.PdfWriter().write(output_pdf_path, template_pdf)
+    except Exception as ex:
+        print(ex)
   
 def calculateAge(birthDate): 
     today = date.today() 
@@ -132,8 +142,9 @@ class CombinedFormBase(forms.Form):
         return cleaned_data
 
 def check_signed_file_exists(employee_id):
+    # return False
     bucket_name = settings.YOUR_S3_BUCKET
-    client = boto3.client('s3')
+    client = boto3.client('s3', aws_access_key_id = settings.ACCESS_KEY, aws_secret_access_key = settings.SECRET_KEY)
     s3_key = ''.join(['media/submitted/', str(employee_id), '_signed_pdf.pdf'])
     bucket = settings.YOUR_S3_BUCKET
     try:
@@ -336,22 +347,21 @@ def create_pdf_files(employee_id):
                     for (key, value) in row_item.items():
                         pdf_data[''.join([key,'_', str(idx)])] = value
                     idx += 1
-
-            write_fillable_pdf('media/pdf-templates/LHP_Employee_Health_Application_2019(120618)(Fillable).pdf', ''.join(['media/submitted/', str(employee_id), '.pdf']), pdf_data)
+            write_fillable_pdf(''.join([settings.S3_TEMPLATE_URL, 'LHP_Employee_Health_Application_2019(120618)(Fillable).pdf']), ''.join(['tmp/', str(employee_id), '.pdf']), pdf_data)
         finally:
             cursor.close()
 
 
-def upload_file_to_s3(uploadfile, object_name):
+def upload_file_to_s3(uploadfile, object_name, s3_dir='media/submitted/'):
     
     bucket_name = settings.YOUR_S3_BUCKET
 
     if object_name is None:
         object_name = uploadfile
     
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client('s3', aws_access_key_id = settings.ACCESS_KEY, aws_secret_access_key = settings.SECRET_KEY)
     try:
-        response = s3_client.upload_file(uploadfile, bucket_name, 'media/submitted/{}.pdf'.format(object_name))
+        response = s3_client.upload_file(uploadfile, bucket_name, ''.join([s3_dir,object_name,'.pdf']), ExtraArgs={'ACL':'public-read'})
     except ClientError as e:
         print(e)
         return False

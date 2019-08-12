@@ -238,8 +238,18 @@ AWS_S3_BUCKET_NAME_STATIC = YOUR_S3_BUCKET
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % YOUR_S3_BUCKET
 STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
 
+AWS_S3_MEDIA_DIR = '%s.s3.amazonaws.com/media/submitted' % YOUR_S3_BUCKET
+
+AWS_S3_PDF_TEMPLATE_DIR = '%s.s3.amazonaws.com/media/pdf-templates' % YOUR_S3_BUCKET
+S3_MEDIA_URL = "https://%s/" % AWS_S3_MEDIA_DIR
+S3_TEMPLATE_URL = "https://%s/" % AWS_S3_PDF_TEMPLATE_DIR
 # OR...if you create a fancy custom domain for your static files use:
 #AWS_S3_PUBLIC_URL_STATIC = "https://static.zappaguide.com/"
 
+AWS_DEFAULT_ACL = 'public-read'
+
 PREFIX_URL = '/dev/'
 # PREFIX_URL = '/'
+
+ACCESS_KEY = 'AKIA2A2XPMGZICRK5UHS'
+SECRET_KEY = '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'
