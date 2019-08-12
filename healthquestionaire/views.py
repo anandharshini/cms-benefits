@@ -25,6 +25,8 @@ def get_employee_instance(user, employee_id):
             employee = get_object_or_404(EmployeeModel, login_user=user)
         else:
             return redirect(''.join([settings.PREFIX_URL, 'employee/create/?toolbar_off']))
+        
+        print('employee check', employee_id, employee.id)
         return employee
     except Http404:
         return redirect(''.join([settings.PREFIX_URL, 'employee/create/?toolbar_off']))
@@ -211,6 +213,7 @@ def coverageview(request):
     return render(request,'healthquestionaire/coverage_form.html',{'form': form, 'heading': heading_message, 'heading_direction': heading_direction, 'back_url': '%semployee/create/?toolbar_off&id=%s' %(settings.PREFIX_URL, employee.id if employee else coverage.employee.id)})
 
 def dependentinfoview(request):
+    print(request.GET.get('employee', None))
     employee = get_employee_instance(request.user, request.GET.get('employee', None))
     heading_message = 'Health Information'
     heading_direction = 'Please provide height and weight for you and your spouse and answer the following health questions regarding any medical conditions or medical treatment for you and your family.'
@@ -240,19 +243,21 @@ def dependentinfoview(request):
             return redirect(''.join([settings.PREFIX_URL, 'medicals/?toolbar_off&employee=', str(employee.id)]))
     if employee:
         try:
-            employee = get_object_or_404(DependentInfoModel, employee=employee)
+            dependent_info = get_object_or_404(DependentInfoModel, employee=employee)
             print(employee)
-            form = DependentInfoForm(instance=employee)
+            form = DependentInfoForm(instance=dependent_info)
         except Http404:
             form = DependentInfoForm(initial={'employee': employee})
     else:
         form = DependentInfoForm()
+    back_url = '%smedications/?toolbar_off&employee=%s' %(settings.PREFIX_URL, str(employee.id))
+    print(employee.id, back_url)
     return render(request,'healthquestionaire/dependentinfo_form.html',
         {
             'form': form, 
             'heading': heading_message, 
             'heading_direction': heading_direction, 
-            'back_url': '%smedications/?toolbar_off&employee=%s' %(settings.PREFIX_URL, employee.id),
+            'back_url': back_url,
         })
 
         # 'next_url': '%smedicals/?toolbar_off&employee=%s' %(settings.PREFIX_URL, employee.id)
