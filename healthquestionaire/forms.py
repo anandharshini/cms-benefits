@@ -33,8 +33,8 @@ class EmployeeModelForm(forms.ModelForm):
              'zip_code': forms.TextInput(attrs={'class': 'masked', 'pattern': '^\d{5}-\d{4}|\d{5}|[A-Z]\d[A-Z] \d[A-Z]\d$', 'placeholder': '99999-9999'}),
              'home_phone': forms.TextInput(attrs={'class': 'masked', 'pattern': '^[2-9]\d{2}-\d{3}-\d{4}$', 'placeholder': '999-999-9999'}),
              'cell_phone': forms.TextInput(attrs={'class': 'masked', 'pattern': '^[2-9]\d{2}-\d{3}-\d{4}$', 'placeholder': '999-999-9999'}),
-             'empl_dob': forms.DateInput(attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/dd/yyyy'}),
-             'empl_hire_date': forms.DateInput(attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/dd/yyyy'})
+             'empl_dob': forms.DateInput(format=('%d/%m/%Y'), attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/dd/yyyy'}),
+             'empl_hire_date': forms.DateInput(format=('%d/%m/%Y'), attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/dd/yyyy'})
             #'empl_dob': forms.DateTimeField(input_formats=['%d/%m/%y'])
                     }
     
@@ -101,6 +101,10 @@ class DependentInfoForm(forms.ModelForm):
 MedicalModelFormset = modelformset_factory(
     MedicalModel,
     fields='__all__',
+    widgets = {
+        'date_of_onset': forms.TextInput(attrs={'class': 'masked', 'pattern': '^((\d)|([0-9][0-9]))[\/]?((\d)|([0-9][0-9][0-9][0-9]))?$', 'placeholder': 'MM/yyyy'}),
+        'date_last_seen': forms.TextInput(attrs={'class': 'masked', 'pattern': '^((\d)|([0-9][0-9]))[\/]?((\d)|([0-9][0-9][0-9][0-9]))?$', 'placeholder': 'MM/yyyy'})
+    },
     extra=1
 )
 
@@ -110,22 +114,22 @@ MedicationModelFormset = modelformset_factory(
     extra=1
 )
 
-class MedicalModelForm(forms.ModelForm):
-    class Meta:
-        model = MedicalModel
-        exclude = ()
-        widgets = {
-            'date_of_onset': forms.DateInput(attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/yyyy'}),
-            'date_last_seen': forms.DateInput(attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/yyyy'})
-        }
+# class MedicalModelForm(forms.ModelForm):
+#     class Meta:
+#         model = MedicalModel
+#         exclude = ()
+#         widgets = {
+#             'date_of_onset': forms.DateInput(format='%d/%m/%Y', attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/yyyy'}),
+#             'date_last_seen': forms.DateInput(format='%d/%m/%Y', attrs={'class': 'masked', 'pattern': '^(((0?[1-9]|1[012])/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])/(29|30)|(0?[13578]|1[02])/31)/(19|[2-9]\d)\d{2}|0?2/29/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$', 'placeholder': 'MM/yyyy'})
+#         }
     
-    def __init__(self, *args, **kwargs):
-        pass
+#     def __init__(self, *args, **kwargs):
+#         pass
 
-class MedicationModelForm(forms.ModelForm):
-    class Meta:
-        model = MedicationModel
-        exclude=()
+# class MedicationModelForm(forms.ModelForm):
+#     class Meta:
+#         model = MedicationModel
+#         exclude=()
     
-    def __init__(self, *args, **kwargs):
-        pass
+#     def __init__(self, *args, **kwargs):
+#         pass

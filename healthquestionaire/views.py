@@ -216,7 +216,8 @@ def dependentinfoview(request):
     heading_direction = 'Please provide height and weight for you and your spouse and answer the following health questions regarding any medical conditions or medical treatment for you and your family.'
     if request.method == 'POST':
         try:
-            form = DependentInfoForm(request.POST, instance=employee)
+            dependentinfo = get_object_or_404(DependentInfoModel, employee=employee)
+            form = DependentInfoForm(request.POST, instance=dependentinfo)
         except Http404:
             form = DependentInfoForm(request.POST)
         if form.is_valid():

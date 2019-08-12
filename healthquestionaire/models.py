@@ -41,12 +41,12 @@ class HealthQuestionnaireModel(models.Model):
 
 class EmployeeModel(models.Model):
     fk_employer = models.ForeignKey("employer.Employer", verbose_name=_("Employer"), related_name='employerName')
-    empl_hire_date = models.DateTimeField(_("* Hire Date"), auto_now_add=False, auto_now=False)
+    empl_hire_date = models.DateField(_("* Hire Date"), auto_now_add=False, auto_now=False)
     job_title = models.CharField(_("* Job Title"), max_length=150)
     hours_worked_per_week = models.ForeignKey("core.LookupModel", verbose_name=_("* Working Status (30 hrs or more is Full Time)"), related_name='empl_hours_wored')
     empl_first_name = models.CharField(_("* First Name"), max_length=250)
     empl_last_name = models.CharField(_("* Last Name"), max_length=250)
-    empl_dob = models.DateTimeField(_("* DOB"), auto_now=False, auto_now_add=False)
+    empl_dob = models.DateField(_("* DOB"), auto_now=False, auto_now_add=False)
     empl_ssn = models.CharField(max_length=11, verbose_name=_("* SSN"))
     empl_gender = models.ForeignKey("core.LookupModel", verbose_name=_("* Gender"), related_name='empl_gender_lookupmodel', on_delete=models.CASCADE)
     marital_status = models.ForeignKey("core.LookupModel", verbose_name=_("* Marital status"), related_name='empl_marital_status')
@@ -118,7 +118,7 @@ class DependentInfoModel(models.Model):
     spouse_height_feet = models.CharField(_("Spouse Height"), max_length=50, blank=True, null=True)
     spouse_height_inches = models.CharField(_("Spouse-Height (inches)"), max_length=50, blank=True, null=True)
     spouse_weight_lbs = models.CharField(_("Spouse Weight (lbs)"), max_length=50, blank=True, null=True)
-    diagnose_treated = models.ManyToManyField("core.LookupModel", blank=True, null=True, related_name='dep_diagnose_treated', verbose_name=_("""Have you or any of your dependent(s) been diagnosed or treated for, or has hospitalization or surgery not yet performed been
+    diagnose_treated = models.ManyToManyField("core.LookupModel", blank=True, related_name='dep_diagnose_treated', verbose_name=_("""Have you or any of your dependent(s) been diagnosed or treated for, or has hospitalization or surgery not yet performed been
         recommended for, any of the following conditions in the past five (5) years? If so, the plan requires you to disclose these conditions solely
         for underwriting purposes (and you can properly disclose by checking “Yes” for each of the conditions for which you and/or your
         dependents have previously received diagnosis, treatment or a recommendation for hospitalization or surgery not yet performed).
@@ -126,12 +126,12 @@ class DependentInfoModel(models.Model):
         hospitalization or surgery not yet performed for any condition, if you fail to disclose any previous treatment, diagnosis, recommendation
         of hospitalization or surgery not yet performed for a condition listed below, the health plan will not cover any medical expenses, diagnosis,
         treatment, services, supplies, surgeries or hospitalizations for that undisclosed condition related or attributable, to the coverage sought
-        as part of this application. NOTE: You are required to disclose any updates to these health questions that may arise prior to the effective date of your coverage"""), blank=True)
-    past_5_insu_decl = models.ForeignKey("core.LookupModel", related_name='dep_past_5_ins_decl', verbose_name=_("""Within the past 5 years, have you or any dependent ever had an application for insurance declined, postponed,
+        as part of this application. NOTE: You are required to disclose any updates to these health questions that may arise prior to the effective date of your coverage"""))
+    past_5_insu_decl = models.ForeignKey("core.LookupModel", related_name='dep_past_5_ins_decl', verbose_name=_("""* Within the past 5 years, have you or any dependent ever had an application for insurance declined, postponed,
         rated or otherwise modified?"""), on_delete=models.CASCADE)
-    past_24_med_cond = models.ForeignKey("core.LookupModel", related_name='dep_past_24_med_cond', verbose_name=_("""Have you or any of your dependent(s) had any medical conditions in the past 24 months requiring medical care,
+    past_24_med_cond = models.ForeignKey("core.LookupModel", related_name='dep_past_24_med_cond', verbose_name=_("""* Have you or any of your dependent(s) had any medical conditions in the past 24 months requiring medical care,
         prescription management, surgery, or hospitalization? * If Yes, please provide information on who and for what conditions in space provided below"""), on_delete=models.CASCADE)
-    past_24_mon_med_exp_5k = models.ForeignKey("core.LookupModel", related_name='dep_past_24_mon_med_exp_5k', verbose_name=_("""In the past 24 months, have you or any of your dependent(s) had more than $5,000 in medical expenses? * If Yes, please provide information on who and for what medical conditions in space provided below"""), on_delete=models.CASCADE)
-    anticipate_hozpital = models.ForeignKey("core.LookupModel", related_name='dep_anticipate_hozpital', verbose_name=_("""Are you or any of your dependent(s) anticipating hospitalization or surgery, or had surgery or hospitalization
+    past_24_mon_med_exp_5k = models.ForeignKey("core.LookupModel", related_name='dep_past_24_mon_med_exp_5k', verbose_name=_("""* In the past 24 months, have you or any of your dependent(s) had more than $5,000 in medical expenses? * If Yes, please provide information on who and for what medical conditions in space provided below"""), on_delete=models.CASCADE)
+    anticipate_hozpital = models.ForeignKey("core.LookupModel", related_name='dep_anticipate_hozpital', verbose_name=_("""* Are you or any of your dependent(s) anticipating hospitalization or surgery, or had surgery or hospitalization
 recommended that has not been performed? * If Yes, please provide information below"""), on_delete=models.CASCADE)
-    dependent_pregnant = models.ForeignKey("core.LookupModel", related_name='dep_dependent_pregnant', verbose_name=_("""Are you or any dependent(s) currently pregnant or suspect you / they may be pregnant? * If Yes, please provide due date and detail in space provided below"""), on_delete=models.CASCADE)
+    dependent_pregnant = models.ForeignKey("core.LookupModel", related_name='dep_dependent_pregnant', verbose_name=_("""* Are you or any dependent(s) currently pregnant or suspect you / they may be pregnant? * If Yes, please provide due date and detail in space provided below"""), on_delete=models.CASCADE)

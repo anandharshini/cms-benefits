@@ -241,5 +241,5 @@ STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
 # OR...if you create a fancy custom domain for your static files use:
 #AWS_S3_PUBLIC_URL_STATIC = "https://static.zappaguide.com/"
 
-#PREFIX_URL = '/dev/'
-PREFIX_URL = '/'
+PREFIX_URL = '/dev/'
+# PREFIX_URL = '/'

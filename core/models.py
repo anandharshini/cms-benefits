@@ -81,7 +81,7 @@ class EmployeeDependent(models.Model):
     last_name = models.CharField(_("Last Name"), max_length=250)
     relationship = models.ForeignKey("core.LookupModel", related_name='empl_relationship', verbose_name=_("Relationship to Employee"), on_delete=models.CASCADE)
     ssn = models.CharField(_("Social Security Number"), max_length=11)
-    dob_dependent = models.DateTimeField(_("Date of Birth"), auto_now=False, auto_now_add=False)
+    dob_dependent = models.DateField(_("Date of Birth"), auto_now=False, auto_now_add=False)
     age = models.IntegerField(_("Age"))
     gender = models.ForeignKey("core.LookupModel", related_name='empl_gender', verbose_name=_("Gender"), on_delete=models.CASCADE)
     tobacco_use = models.ForeignKey("core.LookupModel", verbose_name=_("Tobacco Use"), related_name='dependent_tobacco_use', on_delete=models.CASCADE)
