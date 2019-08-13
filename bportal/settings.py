@@ -14,7 +14,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os
+# import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -150,7 +150,8 @@ INSTALLED_APPS = [
     'healthquestionaire.apps.HealthquestionaireConfig',
 
     # third party
-    'django_s3_storage'
+    'django_s3_storage',
+    'storages'
 ]
 
 LOGIN_REDIRECT_URL = '/dev/?toolbar_off'
@@ -202,6 +203,8 @@ CMS_PLACEHOLDER_CONF = {}
 #     }
 # }
 
+WSGI_APPLICATION = 'bportal.wsgi.application'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -226,30 +229,57 @@ THUMBNAIL_PROCESSORS = (
     'easy_thumbnails.processors.filters'
 )
 
-YOUR_S3_BUCKET = "zappa-cms-static"
+# YOUR_S3_BUCKET = "zappa-cms-static"
 
-SIGNED_PDF_BUCKET = "benefits-signed-pdf"
+# STATICFILES_STORAGE = "django_s3_storage.storage.StaticS3Storage"
+# AWS_S3_BUCKET_NAME_STATIC = YOUR_S3_BUCKET
 
-STATICFILES_STORAGE = "django_s3_storage.storage.StaticS3Storage"
-AWS_S3_BUCKET_NAME_STATIC = YOUR_S3_BUCKET
+# # These next two lines will serve the static files directly 
+# # from the s3 bucket
+# AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % YOUR_S3_BUCKET
+# STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
 
-# These next two lines will serve the static files directly 
-# from the s3 bucket
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % YOUR_S3_BUCKET
-STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
+# AWS_S3_MEDIA_DIR = '%s.s3.amazonaws.com/media/submitted' % YOUR_S3_BUCKET
 
-AWS_S3_MEDIA_DIR = '%s.s3.amazonaws.com/media/submitted' % YOUR_S3_BUCKET
-
-AWS_S3_PDF_TEMPLATE_DIR = '%s.s3.amazonaws.com/media/pdf-templates' % YOUR_S3_BUCKET
-S3_MEDIA_URL = "https://%s/" % AWS_S3_MEDIA_DIR
-S3_TEMPLATE_URL = "https://%s/" % AWS_S3_PDF_TEMPLATE_DIR
+# AWS_S3_PDF_TEMPLATE_DIR = '%s.s3.amazonaws.com/media/pdf-templates' % YOUR_S3_BUCKET
+# S3_MEDIA_URL = "https://%s/" % AWS_S3_MEDIA_DIR
+# S3_TEMPLATE_URL = "https://%s/" % AWS_S3_PDF_TEMPLATE_DIR
 # OR...if you create a fancy custom domain for your static files use:
 #AWS_S3_PUBLIC_URL_STATIC = "https://static.zappaguide.com/"
 
 AWS_DEFAULT_ACL = 'public-read'
 
-PREFIX_URL = '/dev/'
-# PREFIX_URL = '/'
+STATIC_URL = '/static/'
 
-ACCESS_KEY = 'AKIA2A2XPMGZICRK5UHS'
-SECRET_KEY = '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'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static_bportal"),
+]
+
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_cdn", "static_root")
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "media_cdn", "media_root")
+
+AWS_ACCESS_KEY_ID = os.environ["DJANGO_AWSACCESSKEYID"]
+AWS_SECRET_ACCESS_KEY = os.environ["DJANGO_AWSSECRETACCESSKEY"]
+AWS_STORAGE_BUCKET_NAME = 'zappa-cms-static'
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+AWS_LOCATION = 'static'
+AWS_STATIC_LOCATION = 'static_cdn'
+AWS_PUBLIC_MEDIA_LOCATION = 'media/submitted'
+AWS_PRIVATE_MEDIA_LOCATION = 'private_media_cdn'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+
+AWS_S3_MEDIA_CDN = "https://%s/media_cdn/" % (AWS_S3_CUSTOM_DOMAIN)
+
+DEFAULT_FILE_STORAGE = 'bportal.storage_backends.PublicMediaStorage'
+
+# PREFIX_URL = '/dev/'
+PREFIX_URL = '/'

@@ -31,11 +31,11 @@ WIDGET_SUBTYPE_KEY = '/Widget'
 def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
     try:
         s3_client = boto3.client('s3', aws_access_key_id=settings.ACCESS_KEY, aws_secret_access_key=settings.SECRET_KEY)
-        s3_response_object = s3_client.get_object(Bucket=settings.YOUR_S3_BUCKET, Key='media/pdf-templates/LHP_Employee_Health_Application_2019(120618)(Fillable).pdf')
+        s3_response_object = s3_client.get_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key='static/media/pdf-templates/LHP_Employee_Health_Application_2019(120618)(Fillable).pdf')
         object_content = s3_response_object['Body'].read()
         template_pdf = pdfrw.PdfReader(fdata=object_content)
     except Exception as ex:
-        print(ex)
+        print(ex, 'error reading from s3 pdf-templates')
     
     for page in template_pdf.pages:
         annotations = page[ANNOT_KEY]
@@ -54,7 +54,7 @@ def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
     try:
         pdfrw.PdfWriter().write(output_pdf_path, template_pdf)
     except Exception as ex:
-        print(ex)
+        print(ex, 'error writing to temp folder pdfrw')
   
 def calculateAge(birthDate): 
     today = date.today() 
@@ -143,10 +143,10 @@ class CombinedFormBase(forms.Form):
 
 def check_signed_file_exists(employee_id):
     # return False
-    bucket_name = settings.YOUR_S3_BUCKET
-    client = boto3.client('s3', aws_access_key_id = settings.ACCESS_KEY, aws_secret_access_key = settings.SECRET_KEY)
-    s3_key = ''.join(['media/submitted/', str(employee_id), '_signed_pdf.pdf'])
-    bucket = settings.YOUR_S3_BUCKET
+    bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+    client = boto3.client('s3', aws_access_key_id=settings.ACCESS_KEY, aws_secret_access_key=settings.SECRET_KEY)
+    s3_key = ''.join(['static/media/submitted/', str(employee_id), '_signed_pdf.pdf'])
+    bucket = settings.AWS_STORAGE_BUCKET_NAME
     try:
         content = client.head_object(Bucket=bucket,Key=s3_key)
         if content.get('ResponseMetadata',None) is not None:
@@ -347,22 +347,32 @@ def create_pdf_files(employee_id):
                     for (key, value) in row_item.items():
                         pdf_data[''.join([key,'_', str(idx)])] = value
                     idx += 1
-            write_fillable_pdf(''.join([settings.S3_TEMPLATE_URL, 'LHP_Employee_Health_Application_2019(120618)(Fillable).pdf']), ''.join(['tmp/', str(employee_id), '.pdf']), pdf_data)
+            write_fillable_pdf(''.join([settings.STATIC_URL, 'media/pdf-templates/', 'LHP_Employee_Health_Application_2019(120618)(Fillable).pdf']), ''.join(['/tmp/', str(employee_id), '.pdf']), pdf_data)
+        except Exception as ex:
+            print(ex, 'ERror writing pdf')
         finally:
             cursor.close()
 
 
-def upload_file_to_s3(uploadfile, object_name, s3_dir='media/submitted/'):
+def upload_file_to_s3(uploadfile, object_name, s3_dir='static/media/submitted/'):
     
-    bucket_name = settings.YOUR_S3_BUCKET
+    bucket_name = settings.AWS_STORAGE_BUCKET_NAME
 
     if object_name is None:
         object_name = uploadfile
     
-    s3_client = boto3.client('s3', aws_access_key_id = settings.ACCESS_KEY, aws_secret_access_key = settings.SECRET_KEY)
     try:
-        response = s3_client.upload_file(uploadfile, bucket_name, ''.join([s3_dir,object_name,'.pdf']), ExtraArgs={'ACL':'public-read'})
+        # s3 = boto3.resource('s3')
+        s3_client = boto3.client('s3', aws_access_key_id=settings.ACCESS_KEY, aws_secret_access_key=settings.SECRET_KEY)
+        print(uploadfile, bucket_name, ''.join([object_name,'.pdf']))
+        # s3.meta.client.upload_file(uploadfile, bucket_name, ''.join([object_name,'.pdf']), ExtraArgs={'ACL':'public-read'}) 
+        # print(response)
+        s3_client.upload_file(uploadfile, bucket_name, ''.join([s3_dir,object_name,'.pdf']), ExtraArgs={'ACL':'public-read'})
+        # print(response)
     except ClientError as e:
-        print(e)
+        print(e, 'upload file to s3 error')
+        return False
+    except Exception as ex:
+        print(ex, 'upload file failed')
         return False
     return True
