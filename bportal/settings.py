@@ -29,7 +29,7 @@ SECRET_KEY = ')5i6!m4(j5=)m1b3%n^o&wz-0$%j)m7^=*%@v_$(2-q-!2l3xq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['gknh9vvk3h.execute-api.us-west-2.amazonaws.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
