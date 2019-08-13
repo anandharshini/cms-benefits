@@ -16,9 +16,12 @@ from django.conf import settings
 from django.db import connection
 from employer.models import Employer
 import pdfrw
+import enum
+
 
 def get_employee_instance(user, employee_id):
     try:
+        print(enum.__file__, 'enum')
         if employee_id:
             employee = get_object_or_404(EmployeeModel, id=employee_id)
         elif user:
