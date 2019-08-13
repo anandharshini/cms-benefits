@@ -40,20 +40,20 @@ class HealthQuestionnaireModel(models.Model):
         return self.empl_first_name + ' ' + self.empl_last_name
 
 class EmployeeModel(models.Model):
-    fk_employer = models.ForeignKey("employer.Employer", verbose_name=_("Employer"), related_name='employerName')
+    fk_employer = models.ForeignKey("employer.Employer", verbose_name=_("Employer"), related_name='employerName', on_delete=models.CASCADE)
     empl_hire_date = models.DateField(_("* Hire Date"), auto_now_add=False, auto_now=False)
     job_title = models.CharField(_("* Job Title"), max_length=150)
-    hours_worked_per_week = models.ForeignKey("core.LookupModel", verbose_name=_("* Working Status (30 hrs or more is Full Time)"), related_name='empl_hours_wored')
+    hours_worked_per_week = models.ForeignKey("core.LookupModel", verbose_name=_("* Working Status (30 hrs or more is Full Time)"), related_name='empl_hours_wored', on_delete=models.CASCADE)
     empl_first_name = models.CharField(_("* First Name"), max_length=250)
     empl_last_name = models.CharField(_("* Last Name"), max_length=250)
     empl_dob = models.DateField(_("* DOB"), auto_now=False, auto_now_add=False)
     empl_ssn = models.CharField(max_length=11, verbose_name=_("* SSN"))
     empl_gender = models.ForeignKey("core.LookupModel", verbose_name=_("* Gender"), related_name='empl_gender_lookupmodel', on_delete=models.CASCADE)
-    marital_status = models.ForeignKey("core.LookupModel", verbose_name=_("* Marital status"), related_name='empl_marital_status')
+    marital_status = models.ForeignKey("core.LookupModel", verbose_name=_("* Marital status"), related_name='empl_marital_status', on_delete=models.CASCADE)
     street = models.CharField(_("* Address 1"), max_length=50)
     address2 = models.CharField(_("Address 2"), max_length=150, blank=True, null=True)
     city = models.CharField(_("* city"), max_length=150)
-    state = models.ForeignKey("core.LookupModel", verbose_name=_("* State"), related_name='empl_state')
+    state = models.ForeignKey("core.LookupModel", verbose_name=_("* State"), related_name='empl_state', on_delete=models.CASCADE)
     zip_code = models.CharField(_("* Zip"), max_length=50)
     email_address = models.EmailField(_("Email"), max_length=254, blank=True, null=True)
     home_phone = models.CharField(_("Home Phone"), max_length=50, blank=True, null=True)
@@ -71,7 +71,7 @@ class EmployeeModel(models.Model):
         return self.empl_first_name + ' ' + self.empl_last_name
 
 class CoverageModel(models.Model):
-    coverage_level = models.ForeignKey("core.LookupModel", related_name='coverage_level', verbose_name=_("* Coverage Level"))
+    coverage_level = models.ForeignKey("core.LookupModel", related_name='coverage_level', verbose_name=_("* Coverage Level"), on_delete=models.CASCADE)
     employee = models.ForeignKey("healthquestionaire.EmployeeModel", verbose_name=_("Employee"), on_delete=models.CASCADE)
     tobacco_use = models.ForeignKey("core.LookupModel", verbose_name=_("* Tobacco Use"), related_name='employee_tobacco_use', on_delete=models.CASCADE)
     dependent_disabled = models.ForeignKey("core.LookupModel", related_name='empl_dependent_disabled', verbose_name=_("* Are you or any dependent(s) disabled?"), on_delete=models.CASCADE)

@@ -92,8 +92,7 @@ TEMPLATES = [
             ],
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
-                'django.template.loaders.eggs.Loader'
+                'django.template.loaders.app_directories.Loader'
             ],
         },
     },
@@ -154,8 +153,8 @@ INSTALLED_APPS = [
     'storages'
 ]
 
-LOGIN_REDIRECT_URL = '/dev/?toolbar_off'
-LOGOUT_REDIRECT_URL = '/dev/accounts/login/?toolbar_off'
+LOGIN_REDIRECT_URL = '/?toolbar_off'
+LOGOUT_REDIRECT_URL = '/accounts/login/?toolbar_off'
 
 LANGUAGES = (
     ## Customize this

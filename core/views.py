@@ -33,7 +33,7 @@ def signup(request):
                 'token': account_activation_token.make_token(user),
             })
             # user.email_user(subject, message)
-            return redirect('/dev/accounts/login/?toolbar_off')
+            return redirect('/accounts/login/?toolbar_off')
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
