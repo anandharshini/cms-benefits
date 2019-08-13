@@ -53,7 +53,6 @@ docutils==0.14
 durationpy==0.5
 easy-thumbnails==2.6
 ebcli==4.0.18
-enum34==1.1.6
 et-xmlfile==1.0.1
 future==0.16.0
 hashids==1.2.0
