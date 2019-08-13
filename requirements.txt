@@ -52,7 +52,6 @@ docopt==0.6.2
 docutils==0.14
 durationpy==0.5
 easy-thumbnails==2.6
-ebcli==4.0.18
 et-xmlfile==1.0.1
 future==0.16.0
 hashids==1.2.0
@@ -64,7 +63,6 @@ Jinja2==2.10.1
 jmespath==0.9.3
 jsonfield==2.0.2
 kappa==0.6.0
-keyring==9.0
 keyrings.alt==3.1.1
 lambda-packages==0.20.0
 MarkupSafe==1.1.1
