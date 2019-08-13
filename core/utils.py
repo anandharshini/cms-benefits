@@ -30,7 +30,7 @@ WIDGET_SUBTYPE_KEY = '/Widget'
 
 def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
     try:
-        s3_client = boto3.client('s3', aws_access_key_id=settings.ACCESS_KEY, aws_secret_access_key=settings.SECRET_KEY)
+        s3_client = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
         s3_response_object = s3_client.get_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key='static/media/pdf-templates/LHP_Employee_Health_Application_2019(120618)(Fillable).pdf')
         object_content = s3_response_object['Body'].read()
         template_pdf = pdfrw.PdfReader(fdata=object_content)
@@ -144,7 +144,7 @@ class CombinedFormBase(forms.Form):
 def check_signed_file_exists(employee_id):
     # return False
     bucket_name = settings.AWS_STORAGE_BUCKET_NAME
-    client = boto3.client('s3', aws_access_key_id=settings.ACCESS_KEY, aws_secret_access_key=settings.SECRET_KEY)
+    client = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
     s3_key = ''.join(['static/media/submitted/', str(employee_id), '_signed_pdf.pdf'])
     bucket = settings.AWS_STORAGE_BUCKET_NAME
     try:
@@ -363,7 +363,7 @@ def upload_file_to_s3(uploadfile, object_name, s3_dir='static/media/submitted/')
     
     try:
         # s3 = boto3.resource('s3')
-        s3_client = boto3.client('s3', aws_access_key_id=settings.ACCESS_KEY, aws_secret_access_key=settings.SECRET_KEY)
+        s3_client = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
         print(uploadfile, bucket_name, ''.join([object_name,'.pdf']))
         # s3.meta.client.upload_file(uploadfile, bucket_name, ''.join([object_name,'.pdf']), ExtraArgs={'ACL':'public-read'}) 
         # print(response)
