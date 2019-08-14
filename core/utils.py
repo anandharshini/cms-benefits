@@ -347,6 +347,8 @@ def create_pdf_files(employee_id):
                     for (key, value) in row_item.items():
                         pdf_data[''.join([key,'_', str(idx)])] = value
                     idx += 1
+            
+            pdf_data['signature_date_af_date'] = date.today()
             write_fillable_pdf(''.join([settings.STATIC_URL, 'media/pdf-templates/', 'LHP_Employee_Health_Application_2019(120618)(Fillable).pdf']), ''.join(['/tmp/', str(employee_id), '.pdf']), pdf_data)
         except Exception as ex:
             print(ex, 'ERror writing pdf')
