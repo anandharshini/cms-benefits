@@ -68,8 +68,11 @@
 </div>
 <script>
     var canvas = document.querySelector("#cvs-sign-pad");
-    var signaturePad = new SignaturePad(canvas);
-
+    var signature = null;
+    if (canvas){
+        signaturePad = new SignaturePad(canvas);
+    }
+    
     function clearSignature(ev) {
         signaturePad.clear();
     }
