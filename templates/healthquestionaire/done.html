@@ -33,6 +33,7 @@
         {% endif %}
     </div>
     <div class="col s12">
+        {% if not check_signed_file %}
         <form id="signForm" method="POST" action="">
             {% csrf_token %}
             <div class="card grey darken-1" style="padding-bottom:0px;" width="100%">
@@ -51,6 +52,7 @@
                 </div>
             </div>                
         </form>
+        {% endif %}
     </div>
 </div>
 <br><br>

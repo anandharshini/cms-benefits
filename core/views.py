@@ -133,6 +133,7 @@ def signatureview(request):
                 'signed_pdf_file': ''.join([settings.STATIC_URL, 'media/submitted/', str(employee.id), '_signed_pdf.pdf' if bln_check_file else '.pdf']),
                 'heading': heading_message,
                 'PREFIX_URL': settings.PREFIX_URL,
+                'check_signed_file': bln_check_file,
                 'error_status': error
             })
     except Exception as ex:
