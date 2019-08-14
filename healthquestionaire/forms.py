@@ -100,7 +100,7 @@ class DependentInfoForm(forms.ModelForm):
 
 MedicalModelFormset = modelformset_factory(
     MedicalModel,
-    fields='__all__',
+    exclude=('employee',),
     widgets = {
         'date_of_onset': forms.TextInput(attrs={'class': 'masked', 'pattern': '^((\d)|([0-9][0-9]))[\/]?((\d)|([0-9][0-9][0-9][0-9]))?$', 'placeholder': 'MM/yyyy'}),
         'date_last_seen': forms.TextInput(attrs={'class': 'masked', 'pattern': '^((\d)|([0-9][0-9]))[\/]?((\d)|([0-9][0-9][0-9][0-9]))?$', 'placeholder': 'MM/yyyy'})
@@ -110,7 +110,7 @@ MedicalModelFormset = modelformset_factory(
 
 MedicationModelFormset = modelformset_factory(
     MedicationModel,
-    fields='__all__',
+    exclude=('employee',),
     extra=1
 )
 
