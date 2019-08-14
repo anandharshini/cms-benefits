@@ -6,7 +6,6 @@
 
 <div class="container">
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.1.266/build/pdf.min.js"></script>
 <h4>AGREEMENTS, AUTHORIZATION & ATTESTATION</h4>
 <p>Please review your completed application below.  Once all provided information is complete and accurate, please read section 7 at the end of the PDF and sign using the signature card below.
     </p>
@@ -15,18 +14,11 @@
         {% if signed_pdf_file != '' %}
             <input type="hidden" id="hidden-pdf-file-url" value="{{ signed_pdf_file }}">
             <a href="{{ signed_pdf_file }}" target="_blank">Open Filled Form</a>
-            <div class="top-bar">
-                <button class="btn" id="prev-page">
-                    <i class="fas fa-arrow-circle-left"></i> Prev Page
-                </button>
-                <button class="btn" id="next-page">
-                    Next Page <i class="fas fa-arrow-circle-right"></i>
-                </button>
-                <span class="page-info">
-                    Page <span id="page-num"></span> of <span id="page-count"></span>
-                </span>
+            <div>
+                <object data="{{ signed_pdf_file }}" type="application/pdf" width="100%" height="700px">
+                alt : <a href="{{ signed_pdf_file }}">Open filled Form</a>
+                </object>
             </div>
-            <canvas id="pdf-render"></canvas>
             
         {% else %}
             <div><h3>NO SIGNED PDF FILE</h3></div>
@@ -82,137 +74,6 @@
         document.getElementsByName('sign_data')[0].value = data;
         //document.getElementById('signForm').submit();
     }
-
-    function loadPdfFromUrl(url) {
-        let pdfDoc = null,
-        pageNum = 1,
-        pageIsRendering = false,
-        pageNumIsPending = null;
-    
-        const scale = 1.5,
-        canvas = document.querySelector('#pdf-render'),
-        ctx = canvas.getContext('2d');
-        ctx.font = "10px Arial";
-    
-        // Render the page
-        const renderPage = num => {
-        pageIsRendering = true;
-    
-        // Get page
-        pdfDoc.getPage(num).then(page => {
-            // Set scale
-            const viewport = page.getViewport({ scale });
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-    
-            const renderCtx = {
-            canvasContext: ctx,
-            viewport
-            };
-    
-            page.render(renderCtx).promise.then(() => {
-            pageIsRendering = false;
-    
-            if (pageNumIsPending !== null) {
-                renderPage(pageNumIsPending);
-                pageNumIsPending = null;
-            }
-            });
-    
-            // Output current page
-            document.querySelector('#page-num').textContent = num;
-        });
-        };
-    
-        // Check for pages rendering
-        const queueRenderPage = num => {
-        if (pageIsRendering) {
-            pageNumIsPending = num;
-        } else {
-            renderPage(num);
-        }
-        };
-    
-        // Show Prev Page
-        const showPrevPage = () => {
-        if (pageNum <= 1) {
-            return;
-        }
-        pageNum--;
-        queueRenderPage(pageNum);
-        };
-    
-        // Show Next Page
-        const showNextPage = () => {
-        if (pageNum >= pdfDoc.numPages) {
-            return;
-        }
-        pageNum++;
-        queueRenderPage(pageNum);
-        };
-    
-        // Get Document
-        pdfjsLib
-        .getDocument(url)
-        .promise.then(pdfDoc_ => {
-            pdfDoc = pdfDoc_;
-    
-            document.querySelector('#page-count').textContent = pdfDoc.numPages;
-    
-            renderPage(pageNum);
-        })
-        .catch(err => {
-            // Display error
-            const div = document.createElement('div');
-            div.className = 'error';
-            div.appendChild(document.createTextNode(err.message));
-            document.querySelector('body').insertBefore(div, canvas);
-            // Remove top bar
-            document.querySelector('.top-bar').style.display = 'none';
-        });
-    
-        // Button Events
-        document.querySelector('#prev-page').addEventListener('click', showPrevPage);
-        document.querySelector('#next-page').addEventListener('click', showNextPage);
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log(document.querySelector('#hidden-pdf-file-url'));
-        if (document.querySelector('#hidden-pdf-file-url').text !== 'undefined') {
-            loadPdfFromUrl(document.querySelector('#hidden-pdf-file-url').value);
-        }
-    });
     
 </script>
-<style>
-
-    .top-bar {
-    background: #333;
-    color: #fff;
-    padding: 1rem;
-    }
-    
-    .btn {
-    background: coral;
-    color: #fff;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 0.7rem 2rem;
-    }
-    
-    .btn:hover {
-    opacity: 0.9;
-    }
-    
-    .page-info {
-    margin-left: 1rem;
-    }
-    
-    .error {
-    background: orangered;
-    color: #fff;
-    padding: 1rem;
-    }
-</style>
 {% endblock %}
