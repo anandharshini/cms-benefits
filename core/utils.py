@@ -161,7 +161,7 @@ def create_pdf_files(employee_id):
     with connection.cursor() as cursor:
         sql = """
         select emplr.name as section_1_employer_name, emplr.street as section_1_street_address, emplr.city as section_1_city, emplr.state as section_1_state, emplr.zip_code as section_1_zip,
-            empls.empl_first_name || ' ' || empls.empl_last_name as section_2_employee_full_name, empls.empl_hire_date assection_2_hire_date, empls.empl_dob as section_2_employee_birth_date,
+            empls.empl_first_name || ' ' || empls.empl_last_name as section_2_employee_full_name, empls.empl_hire_date as section_2_hire_date, empls.empl_dob as section_2_employee_birth_date,
             empls.street as section_2_street_address, empls.city as section_2_city, (Select value_lookup from lookup_data where id = empls.state_id limit 1) as section_2_state, empls.zip_code as section_2_zip,
             empls.empl_ssn as section_2_employee_ssn, empls.empl_gender_id as section_2_gender, case when hcm.tobacco_use_id = 18 then 'Yes' else 'No' end as section_2_tobacco_use_yes, case when hcm.tobacco_use_id = 19 then 'Yes' else 'No' end as section_2_tobacco_use_no,
             case when empls.marital_status_id = 26 then 'Yes' else 'No' end as section_2_marital_status_married ,
