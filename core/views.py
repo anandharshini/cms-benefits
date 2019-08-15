@@ -106,7 +106,7 @@ def signatureview(request):
                 create_pdf_files(employee.id)
                 sign_file = ''.join(['/tmp/', str(employee.id), '_signature.pdf'])
                 c = canvas.Canvas(sign_file)
-                c.drawImage(request.POST['sign_data'], 10, 10, mask='auto')
+                c.drawImage(request.POST['sign_data'], 50, 30, mask='auto', width=200, height=50)
                 c.showPage()
                 c.save()
                 
