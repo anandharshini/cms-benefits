@@ -150,7 +150,9 @@ INSTALLED_APPS = [
 
     # third party
     'django_s3_storage',
-    'storages'
+    'storages',
+    'django_tables2',
+    'crudbuilder'
 ]
 
 LOGIN_REDIRECT_URL = '/?toolbar_off'

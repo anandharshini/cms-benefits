@@ -103,7 +103,7 @@ def signatureview(request):
         form = SignatureForm(request.POST)
         if employee:
             try:
-                create_pdf_files(employee.id)
+                data_dict = create_pdf_files(employee.id)
                 sign_file = ''.join(['/tmp/', str(employee.id), '_signature.pdf'])
                 c = canvas.Canvas(sign_file)
                 c.drawImage(request.POST['sign_data'], 70, 50, mask='auto', width=200, height=50)
@@ -114,7 +114,7 @@ def signatureview(request):
                 if employee and not bln_check_file:
                     upload_file_to_s3(''.join(['/tmp/', str(employee.id), '.pdf']), ''.join([str(employee.id)]))
                 signed_file = ''.join(['/tmp/', str(employee.id), '_signed.pdf'])
-                signaturemerger(employee_file, sign_file, signed_file)
+                signaturemerger(employee_file, sign_file, signed_file, data_dict)
                 upload_file_to_s3(signed_file, ''.join([str(employee.id), '_signed_pdf']))
             except Exception as ex:
                 error = ex

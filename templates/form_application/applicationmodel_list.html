@@ -68,10 +68,10 @@ input.masked,
 <ul style="margin-bottom: 250px;">
 {% for appform in application_exist %}
     <li>
-        <a href="employee/create/?id={{appform.id}}">2019 Employee Health Application - {{ appform.empl_last_name }}</a>
+        <a href="employee/create/?toolbar_off&id={{appform.id}}">2019 Employee Health Application - {{ appform.empl_last_name }}</a>
     </li>
 {% empty %}
-    <li><a href="employee/create/">2019 Employee Health Application</a>
+    <li><a href="employee/create/?toolbar_off">2019 Employee Health Application</a>
     </li>
 {% endfor %}
 </ul>

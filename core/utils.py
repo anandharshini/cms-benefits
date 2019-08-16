@@ -27,6 +27,21 @@ ANNOT_RECT_KEY = '/Rect'
 SUBTYPE_KEY = '/Subtype'
 WIDGET_SUBTYPE_KEY = '/Widget'
 
+def annotate_pdf(template_pdf, data_dict):
+    for page in template_pdf.pages:
+        annotations = page[ANNOT_KEY]
+        for annotation in annotations:
+            if annotation[SUBTYPE_KEY] == WIDGET_SUBTYPE_KEY:
+                if annotation[ANNOT_FIELD_KEY]:
+                    key = annotation[ANNOT_FIELD_KEY][1:-1]
+                    if key in data_dict.keys():
+                        # print(key, data_dict[key])
+                        if data_dict[key] == 'Yes' or data_dict[key] == 'No' or data_dict[key] == 'Off':
+                            annotation.update(pdfrw.PdfDict(AS=pdfrw.PdfName(data_dict[key])))
+                        else:
+                            annotation.update(
+                                pdfrw.PdfDict(V='{}'.format(data_dict[key]))
+                            )
 
 def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
     try:
@@ -37,20 +52,8 @@ def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
     except Exception as ex:
         print(ex, 'error reading from s3 pdf-templates')
     
-    for page in template_pdf.pages:
-        annotations = page[ANNOT_KEY]
-        for annotation in annotations:
-            if annotation[SUBTYPE_KEY] == WIDGET_SUBTYPE_KEY:
-                if annotation[ANNOT_FIELD_KEY]:
-                    key = annotation[ANNOT_FIELD_KEY][1:-1]
-                    if key in data_dict.keys():
-                        print(key, data_dict[key])
-                        if data_dict[key] == 'Yes' or data_dict[key] == 'No' or data_dict[key] == 'Off':
-                            annotation.update(pdfrw.PdfDict(AS=pdfrw.PdfName(data_dict[key])))
-                        else:
-                            annotation.update(
-                                pdfrw.PdfDict(V='{}'.format(data_dict[key]))
-                            )
+    annotate_pdf(template_pdf, data_dict)
+                        
     try:
         pdfrw.PdfWriter().write(output_pdf_path, template_pdf)
     except Exception as ex:
@@ -61,13 +64,15 @@ def calculateAge(birthDate):
     age = today.year - birthDate.year - ((today.month, today.day) < (birthDate.month, birthDate.day)) 
     return age 
 
-def signaturemerger(path, signature, output):
+def signaturemerger(path, signature, output, data_dict):
     base_pdf = pdfrw.PdfReader(path)
     signature_pdf = pdfrw.PdfReader(signature)
     mark = signature_pdf.pages[0]
     
     merger = pdfrw.PageMerge(base_pdf.pages[2])
     merger.add(mark).render()
+
+    annotate_pdf(base_pdf, data_dict)
  
     writer = pdfrw.PdfWriter()
     writer.write(output, base_pdf)
@@ -354,6 +359,7 @@ def create_pdf_files(employee_id):
             print(ex, 'ERror writing pdf')
         finally:
             cursor.close()
+            return pdf_data
 
 
 def upload_file_to_s3(uploadfile, object_name, s3_dir='static/media/submitted/'):

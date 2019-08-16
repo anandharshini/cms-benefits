@@ -28,6 +28,7 @@ urlpatterns += i18n_patterns(
         core_views.activate, name='activate'), # activate account route
     url(r'^employer/', include('employer.urls')),
     url(r'^employee/', include('healthquestionaire.employee_urls')),
+    url(r'^crud/', include('crudbuilder.urls')),
     url(r'^', include('cms.urls')),
 )
 
