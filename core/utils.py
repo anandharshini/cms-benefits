@@ -34,8 +34,9 @@ def annotate_pdf(template_pdf, data_dict):
             if annotation[SUBTYPE_KEY] == WIDGET_SUBTYPE_KEY:
                 if annotation[ANNOT_FIELD_KEY]:
                     key = annotation[ANNOT_FIELD_KEY][1:-1]
+                    print(key)
                     if key in data_dict.keys():
-                        # print(key, data_dict[key])
+                        print(key, data_dict[key])
                         if data_dict[key] == 'Yes' or data_dict[key] == 'No' or data_dict[key] == 'Off':
                             annotation.update(pdfrw.PdfDict(AS=pdfrw.PdfName(data_dict[key])))
                         else:
@@ -297,7 +298,9 @@ def create_pdf_files(employee_id):
                 case when hdi.anticipate_hozpital_id = 18 then 'Yes' else 'No' end as section_6_question_5_yes,
                 case when hdi.anticipate_hozpital_id = 19 then 'Yes' else 'No' end as section_6_question_5_no,
                 case when hdi.dependent_pregnant_id = 18 then 'Yes' else 'No' end as section_6_question_6_yes,
-                case when hdi.dependent_pregnant_id = 19 then 'Yes' else 'No' end as section_6_question_6_no
+                case when hdi.dependent_pregnant_id = 19 then 'Yes' else 'No' end as section_6_question_6_no,
+                hdi.self_height_feet as section_6_employee_height_feet, hdi.self_weight_lbs as section_6_employee_weight,
+                hdi.spouse_height_feet as section_6_spouse_height_feet, hdi.spouse_weight_lbs as section_6_spouse_weight 
                 from healthquestionaire_dependentinfomodel hdi where hdi.employee_id = """ + str(employee_id)
             cursor.execute(sql)
             columns = [col[0] for col in cursor.description]

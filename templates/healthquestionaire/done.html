@@ -13,10 +13,10 @@
     <div class="col s12">
         {% if signed_pdf_file != '' %}
             <input type="hidden" id="hidden-pdf-file-url" value="{{ signed_pdf_file }}">
-            <a href="{{ signed_pdf_file }}" target="_blank">Open Filled Form</a>
+            <a href="{{ signed_pdf_file }}" target="_blank">Open Completed PDF Application</a>
             <div>
                 <object data="{{ signed_pdf_file }}" type="application/pdf" width="100%" height="700px">
-                alt : <a href="{{ signed_pdf_file }}">Open filled Form</a>
+                alt : <a href="{{ signed_pdf_file }}">Open Completed PDF Application</a>
                 </object>
             </div>
             
@@ -49,10 +49,11 @@
 </div>
 <br><br>
 <div class="row">
-        <div class="col s11">
-            <a class="waves-effect waves-light btn" href="{{PREFIX_URL}}medicals/?employee={{ request.GET.employee }}">Back</a>
-        </div>
-       
+        {% if not check_signed_file %}
+            <div class="col s11">
+                <a class="waves-effect waves-light btn" href="{{PREFIX_URL}}medicals/?employee={{ request.GET.employee }}">Back</a>
+            </div>
+        {% endif %}
         <div class="col s1">
             <a class="waves-effect waves-light btn" href="{{PREFIX_URL}}?toolbar_off">Finish</a>
         </div>

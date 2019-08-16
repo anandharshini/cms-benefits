@@ -3,6 +3,8 @@ from django.views.generic.list import ListView
 from .models import ApplicationModel
 from core.models import LookupModel
 from healthquestionaire.models import EmployeeModel
+from core.utils import check_signed_file_exists
+from healthquestionaire.views import get_employee_instance
 
 class ApplicationModelListView(ListView):
     model = ApplicationModel
@@ -11,5 +13,8 @@ class ApplicationModelListView(ListView):
     def get_context_data(self, *args, **kwargs):
         context = super(ApplicationModelListView, self).get_context_data(**kwargs)
         # context["submitted_apps"] = LookupModel.objects.all()
+        employee = get_employee_instance(self.request.user, self.request.GET.get('employee', None))
+        context['check_signed_file'] = check_signed_file_exists(employee.id)
+        context['employee'] = employee
         context["application_exist"] = EmployeeModel.objects.filter(login_user=self.request.user)
         return context

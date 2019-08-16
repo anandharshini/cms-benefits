@@ -116,6 +116,7 @@ def signatureview(request):
                 signed_file = ''.join(['/tmp/', str(employee.id), '_signed.pdf'])
                 signaturemerger(employee_file, sign_file, signed_file, data_dict)
                 upload_file_to_s3(signed_file, ''.join([str(employee.id), '_signed_pdf']))
+                bln_check_file = check_signed_file_exists(employee.id)
             except Exception as ex:
                 error = ex
 

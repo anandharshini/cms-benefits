@@ -13,6 +13,7 @@ class ApplicationModel(models.Model):
     submit_user = models.ForeignKey(User, verbose_name=_(""), on_delete=models.CASCADE)
     employee = models.ForeignKey("healthquestionaire.EmployeeModel", verbose_name=_(""), on_delete=models.CASCADE, blank=True, null=True)
     pdf_file = models.FileField(_("Application Form"), upload_to=upload_location, max_length=100, blank=True, null=True)
+    completed = models.NullBooleanField(_("PDF Form Completed"))
 
     class Meta:
         db_table = 'pdf_forms_submitted'

@@ -67,9 +67,15 @@ input.masked,
 <H5>Please click the link below to complete your 2019 Employee Health Application</H5><br><br>
 <ul style="margin-bottom: 250px;">
 {% for appform in application_exist %}
+  {% if not check_signed_file %}
     <li>
-        <a href="employee/create/?toolbar_off&id={{appform.id}}">2019 Employee Health Application - {{ appform.empl_last_name }}</a>
+      <a href="employee/create/?toolbar_off&id={{appform.id}}">2019 Employee Health Application - {{ appform.empl_last_name }}</a>
     </li>
+  {% else %}
+    <li>
+      <a href="signpdf/?toolbar_off&employee={{employee.id}}">2019 Employee Health Application Completed Form - {{ appform.empl_last_name }}</a>
+    </li>
+  {% endif %}
 {% empty %}
     <li><a href="employee/create/?toolbar_off">2019 Employee Health Application</a>
     </li>
