@@ -31,7 +31,7 @@
             <!-- {{field.html_name}} -->
             <div class="input-field col s6">
                 {% if field.field.widget.input_type == 'checkbox' %}
-                    <span>
+                    <div>
                         <div class="col s12">
                             {{ field.label_tag }}
                         </div>
@@ -44,9 +44,9 @@
                                 {{ check }}
                             </div>
                         {% endfor %}
-                    </span>
+                    </div>
                 {% elif field.field.widget.input_type == 'radio' %}
-                    <span>
+                    <div>
                         <div class="col s12">
                             {{ field.label_tag }}
                         </div>
@@ -60,15 +60,15 @@
                             </div>
                             {% endif %}
                         {% endfor %}
-                    </span>
+                    </div>
                 {% else %}
-                <span>
+                <div>
                     {{ field.label_tag }}
                     {% if field.help_text %}
                     <sup>{{ field.help_text }}</sup>
                     {% endif %}
                     {{ field }} 
-                </span> 
+                </div> 
                 {% endif %}
             </div>
             {% endfor %}
