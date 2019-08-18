@@ -114,6 +114,8 @@ MIDDLEWARE = [
     'cms.middleware.language.LanguageCookieMiddleware'
 ]
 
+SESSION_EXPIRY_TIME = 300
+
 INSTALLED_APPS = [
     'djangocms_admin_style',
     'django.contrib.auth',
