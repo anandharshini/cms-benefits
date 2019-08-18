@@ -149,11 +149,12 @@ class CombinedFormBase(forms.Form):
 
 def check_signed_file_exists(employee_id):
     # return False
-    bucket_name = settings.AWS_STORAGE_BUCKET_NAME
-    client = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
-    s3_key = ''.join(['static/media/submitted/', str(employee_id), '_signed_pdf.pdf'])
-    bucket = settings.AWS_STORAGE_BUCKET_NAME
     try:
+        bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+        client = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+        s3_key = ''.join(['static/media/submitted/', str(employee_id), '_signed_pdf.pdf'])
+        bucket = settings.AWS_STORAGE_BUCKET_NAME
+    
         content = client.head_object(Bucket=bucket,Key=s3_key)
         if content.get('ResponseMetadata',None) is not None:
             return True

@@ -27,12 +27,12 @@ def get_employee_instance(user, employee_id):
         elif user:
             employee = get_object_or_404(EmployeeModel, login_user=user)
         else:
-            return redirect(''.join([settings.PREFIX_URL, 'employee/create/?toolbar_off']))
+            return None
         
         print('employee check', employee_id, employee.id)
         return employee
     except Http404:
-        return redirect(''.join([settings.PREFIX_URL, 'employee/create/?toolbar_off']))
+        return None
         
 def create_medical_model_form(request):
     template_name = 'medical_formset.html'
@@ -152,8 +152,8 @@ def employeeview(request):
     user = request.user
     if request.method == 'POST':
         try:
-            print(request.GET.get('id', None))
-            employee = get_object_or_404(EmployeeModel, empl_ssn=request.POST['empl_ssn'])
+            # print(request.GET.get('id', None))
+            employee = get_object_or_404(EmployeeModel, login_user_id=request.user)
             form = EmployeeModelForm(request.POST, instance=employee)
         except Http404:
             form = EmployeeModelForm(request.POST)

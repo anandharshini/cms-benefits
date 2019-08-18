@@ -14,7 +14,8 @@ class ApplicationModelListView(ListView):
         context = super(ApplicationModelListView, self).get_context_data(**kwargs)
         # context["submitted_apps"] = LookupModel.objects.all()
         employee = get_employee_instance(self.request.user, self.request.GET.get('employee', None))
-        context['check_signed_file'] = check_signed_file_exists(employee.id)
+        # print(employee, 'check signed file')
+        context['check_signed_file'] = check_signed_file_exists(employee.id) if employee else False
         context['employee'] = employee
         context["application_exist"] = EmployeeModel.objects.filter(login_user=self.request.user)
         return context
