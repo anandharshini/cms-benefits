@@ -30,7 +30,9 @@
             {% csrf_token %}
             <div class="card grey darken-1" style="padding-bottom:0px;" width="100%">
                 <!-- {{ form.as_p }} -->
-                {{ error_status }}
+                {% if error_status %}
+                <div class="card-panel red lighten-2">{{ error_status }}</div>
+                {% endif %}
                 <input type="hidden" name="sign_data" maxlength="1024" required id="id_sign_data" />
                 <div class="card-content white-text" style="padding-bottom:0px;" width="100%">
                     <span class="card-title">Signature Card</span>

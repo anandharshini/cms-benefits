@@ -168,7 +168,7 @@ def create_pdf_files(employee_id):
     with connection.cursor() as cursor:
         sql = """
         select emplr.name as section_1_employer_name, emplr.street as section_1_street_address, emplr.city as section_1_city, emplr.state as section_1_state, emplr.zip_code as section_1_zip,
-            empls.empl_first_name || ' ' || empls.empl_last_name as section_2_employee_full_name, empls.empl_hire_date as section_2_hire_date, empls.empl_dob as section_2_employee_birth_date,
+            empls.empl_first_name || ' ' || empls.empl_last_name as section_2_employee_full_name, TO_CHAR(empls.empl_hire_date, 'mm/dd/yyyy') as section_2_hire_date, TO_CHAR(empls.empl_dob, 'dd/mm/yyyy') as section_2_employee_birth_date,
             empls.street as section_2_street_address, empls.city as section_2_city, (Select value_lookup from lookup_data where id = empls.state_id limit 1) as section_2_state, empls.zip_code as section_2_zip,
             empls.empl_ssn as section_2_employee_ssn, empls.empl_gender_id as section_2_gender, case when hcm.tobacco_use_id = 18 then 'Yes' else 'No' end as section_2_tobacco_use_yes, case when hcm.tobacco_use_id = 19 then 'Yes' else 'No' end as section_2_tobacco_use_no,
             case when empls.marital_status_id = 26 then 'Yes' else 'No' end as section_2_marital_status_married ,
@@ -181,7 +181,7 @@ def create_pdf_files(employee_id):
             case when hcm.dependent_disabled_id = 19 then 'Yes' else 'Off' end as section_3_dependents_disabled_no, hcm.dependent_disabled_name as section_3_dependents_disabled_names,
             case when hcm.dependent_insurance_other_continue_id = 18 then 'Yes' else 'Off' end as section_3_insurance_other_yes,
             case when hcm.dependent_insurance_other_continue_id = 19 then 'Yes' else 'Off' end as section_3_insurance_other_no, hcm.dependent_isu_coverage_carrier as section_3_name_of_other_health_insurance_carrier,
-            hcm.effective_date as section_3_effective_date, 
+            TO_CHAR(hcm.effective_date, 'mm/dd/yyyy') as section_3_effective_date, 
             'Yes' as section_5_elect_coverage,
             'Off' as section_5_decline_coverage,
             case when hcm.coverage_level_id = 22 then 'Yes' else 'No' end as section_5_employee_only,
@@ -356,8 +356,8 @@ def create_pdf_files(employee_id):
                     for (key, value) in row_item.items():
                         pdf_data[''.join([key,'_', str(idx)])] = value
                     idx += 1
-            
-            pdf_data['signature_date_af_date'] = date.today()
+            if check_signed_file_exists(employee_id):
+                pdf_data['signature_date_af_date'] = date.today()
             write_fillable_pdf(''.join([settings.STATIC_URL, 'media/pdf-templates/', 'LHP_Employee_Health_Application_2019(120618)(Fillable).pdf']), ''.join(['/tmp/', str(employee_id), '.pdf']), pdf_data)
         except Exception as ex:
             print(ex, 'ERror writing pdf')

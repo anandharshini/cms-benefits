@@ -229,6 +229,9 @@ def dependentinfoview(request):
         if form.is_valid():
             if employee:
                 saved_data = form.save(commit=False)
+                print(saved_data.diagnose_treated, form.cleaned_data, 'diagnose')
+                saved_data.diagnose_treated.clear()
+                saved_data.diagnose_treated.add(*form.cleaned_data['diagnose_treated'])
                 saved_data.employee = employee
                 saved_data.save()
             # print(saved_data)
