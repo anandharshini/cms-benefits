@@ -169,8 +169,10 @@ def create_pdf_files(employee_id):
         sql = """
         select emplr.name as section_1_employer_name, emplr.street as section_1_street_address, emplr.city as section_1_city, emplr.state as section_1_state, emplr.zip_code as section_1_zip,
             empls.empl_first_name || ' ' || empls.empl_last_name as section_2_employee_full_name, TO_CHAR(empls.empl_hire_date, 'mm/dd/yyyy') as section_2_hire_date, TO_CHAR(empls.empl_dob, 'dd/mm/yyyy') as section_2_employee_birth_date,
-            empls.street as section_2_street_address, empls.city as section_2_city, (Select value_lookup from lookup_data where id = empls.state_id limit 1) as section_2_state, empls.zip_code as section_2_zip,
-            empls.empl_ssn as section_2_employee_ssn, empls.empl_gender_id as section_2_gender, case when hcm.tobacco_use_id = 18 then 'Yes' else 'No' end as section_2_tobacco_use_yes, case when hcm.tobacco_use_id = 19 then 'Yes' else 'No' end as section_2_tobacco_use_no,
+            empls.street as section_2_street_address, empls.city as section_2_city, (Select key_lookup from lookup_data where id = empls.state_id limit 1) as section_2_state, empls.zip_code as section_2_zip,
+            empls.empl_ssn as section_2_employee_ssn, case when empls.empl_gender_id = 41 then 'Yes' else 'No' end as section_2_gender_male, 
+            case when empls.empl_gender_id = 42 then 'Yes' else 'No' end as section_2_gender_female, 
+            case when hcm.tobacco_use_id = 18 then 'Yes' else 'No' end as section_2_tobacco_use_yes, case when hcm.tobacco_use_id = 19 then 'Yes' else 'No' end as section_2_tobacco_use_no,
             case when empls.marital_status_id = 26 then 'Yes' else 'No' end as section_2_marital_status_married ,
             case when empls.marital_status_id = 27 then 'Yes' else 'No' end as section_2_marital_status_single,
             case when empls.marital_status_id = 28 then 'Yes' else 'No' end as section_2_marital_status_widowed,
@@ -179,8 +181,11 @@ def create_pdf_files(employee_id):
             empls.job_title as section_2_job_title, (Select value_lookup from lookup_data where id = empls.hours_worked_per_week_id limit 1) as section_2_hours_worked_per_week, empls.spouse_employer as section_2_spouse_employer, empls.spouse_buisness_phone as section_2_spouse_business_phone,
             case when hcm.dependent_disabled_id = 18 then 'Yes' else 'Off' end as section_3_dependents_disabled_yes,
             case when hcm.dependent_disabled_id = 19 then 'Yes' else 'Off' end as section_3_dependents_disabled_no, hcm.dependent_disabled_name as section_3_dependents_disabled_names,
-            case when hcm.dependent_insurance_other_continue_id = 18 then 'Yes' else 'Off' end as section_3_insurance_other_yes,
-            case when hcm.dependent_insurance_other_continue_id = 19 then 'Yes' else 'Off' end as section_3_insurance_other_no, hcm.dependent_isu_coverage_carrier as section_3_name_of_other_health_insurance_carrier,
+            case when hcm.dependent_insurance_other_continue_id = 18 then 'Yes' else 'Off' end as section_3_other_health_insurance_yes,
+            case when hcm.dependent_insurance_other_continue_id = 19 then 'Yes' else 'Off' end as section_3_other_health_insurance_no, 
+            hcm.dependent_isu_coverage_carrier as section_3_name_of_other_health_insurance_carrier,
+            hcm.policy_holders_name as section_3_policy_holder_name, hcm.policy_number as section_3_policy_number,
+            hcm.names_covered_dependents as section_3_names_of_covered_dependents,
             TO_CHAR(hcm.effective_date, 'mm/dd/yyyy') as section_3_effective_date, 
             'Yes' as section_5_elect_coverage,
             'Off' as section_5_decline_coverage,
@@ -239,55 +244,55 @@ def create_pdf_files(employee_id):
                 for row in cursor.fetchall()]
             # print(data[0])
             pdf_data = data[0]
-            # sql = """
-            #     select case when value_1 is not null then 'Yes' else 'No' end as section_6_cardiac_disorder_yes,
-            #         case when value_1 is null then 'Yes' else 'No' end as section_6_cardiac_disorder_no,
-            #         case when value_2 is not null then 'Yes' else 'No' end as section_6_cancer_tumor_yes,
-            #         case when value_2 is null then 'Yes' else 'No' end as section_6_cancer_tumor_no,
-            #         case when value_3 is not null then 'Yes' else 'No' end as section_6_diabetes_yes,
-            #         case when value_3 is null then 'Yes' else 'No' end as section_6_diabetes_no,
-            #         case when value_4 is not null then 'Yes' else 'No' end as section_6_kidney_disorder_yes,
-            #         case when value_4 is null then 'Yes' else 'No' end as section_6_kidney_disorder_no,
-            #         case when value_5 is not null then 'Yes' else 'No' end as section_6_respiratory_disorder_yes,
-            #         case when value_5 is null then 'Yes' else 'No' end as section_6_respiratory_disorder_no,
-            #         case when value_6 is not null then 'Yes' else 'No' end as section_6_liver_disorder_yes,
-            #         case when value_6 is null then 'Yes' else 'No' end as section_6_liver_disorder_no,
-            #         case when value_7 is not null then 'Yes' else 'No' end as section_6_high_blood_pressure_yes,
-            #         case when value_7 is null then 'Yes' else 'No' end as section_6_high_blood_pressure_no,
-            #         case when value_8 is not null then 'Yes' else 'No' end as section_6_aids_hiv_immune_system_disorder_yes,
-            #         case when value_8 is null then 'Yes' else 'No' end as section_6_aids_hiv_immune_system_disorder_no,
-            #         case when value_9 is not null then 'Yes' else 'No' end as section_6_alcohol_drug_abuse_yes,
-            #         case when value_9 is null then 'Yes' else 'No' end as section_6_alcohol_drug_abuse_no,
-            #         case when value_10 is not null then 'Yes' else 'No' end as section_6_mental_nervous_disorder_yes,
-            #         case when value_10 is null then 'Yes' else 'No' end as section_6_mental_nervous_disorder_no,
-            #         case when value_11 is not null then 'Yes' else 'No' end as section_6_neuro_muscular_yes,
-            #         case when value_11 is null then 'Yes' else 'No' end as section_6_neuro_muscular_no,
-            #         case when value_12 is not null then 'Yes' else 'No' end as section_6_stomach_gastrointestinal_yes,
-            #         case when value_12 is null then 'Yes' else 'No' end as section_6_stomach_gastrointestinal_no,
-            #         case when value_13 is not null then 'Yes' else 'No' end as section_6_joint_disorder_yes,
-            #         case when value_13 is null then 'Yes' else 'No' end as section_6_joint_disorder_no,
-            #         case when value_14 is not null then 'Yes' else 'No' end as section_6_seizures_convulsion_epilepsy_yes,
-            #         case when value_14 is null then 'Yes' else 'No' end as section_6_seizures_convulsion_epilepsy_no,
-            #         case when value_15 is not null then 'Yes' else 'No' end as section_6_any_other_medical_condition_yes,
-            #         case when value_15 is null then 'Yes' else 'No' end as section_6_any_other_medical_condition_no
+            sql = """
+                select case when value_1 is not null then 'Yes' else 'No' end as section_6_cardiac_disorder_yes,
+                    case when value_1 is null then 'Yes' else 'No' end as section_6_cardiac_disorder_no,
+                    case when value_2 is not null then 'Yes' else 'No' end as section_6_cancer_tumor_yes,
+                    case when value_2 is null then 'Yes' else 'No' end as section_6_cancer_tumor_no,
+                    case when value_3 is not null then 'Yes' else 'No' end as section_6_diabetes_yes,
+                    case when value_3 is null then 'Yes' else 'No' end as section_6_diabetes_no,
+                    case when value_4 is not null then 'Yes' else 'No' end as section_6_kidney_disorder_yes,
+                    case when value_4 is null then 'Yes' else 'No' end as section_6_kidney_disorder_no,
+                    case when value_5 is not null then 'Yes' else 'No' end as section_6_respiratory_disorder_yes,
+                    case when value_5 is null then 'Yes' else 'No' end as section_6_respiratory_disorder_no,
+                    case when value_6 is not null then 'Yes' else 'No' end as section_6_liver_disorder_yes,
+                    case when value_6 is null then 'Yes' else 'No' end as section_6_liver_disorder_no,
+                    case when value_7 is not null then 'Yes' else 'No' end as section_6_high_blood_pressure_yes,
+                    case when value_7 is null then 'Yes' else 'No' end as section_6_high_blood_pressure_no,
+                    case when value_8 is not null then 'Yes' else 'No' end as section_6_aids_hiv_immune_system_disorder_yes,
+                    case when value_8 is null then 'Yes' else 'No' end as section_6_aids_hiv_immune_system_disorder_no,
+                    case when value_9 is not null then 'Yes' else 'No' end as section_6_alcohol_drug_abuse_yes,
+                    case when value_9 is null then 'Yes' else 'No' end as section_6_alcohol_drug_abuse_no,
+                    case when value_10 is not null then 'Yes' else 'No' end as section_6_mental_nervous_disorder_yes,
+                    case when value_10 is null then 'Yes' else 'No' end as section_6_mental_nervous_disorder_no,
+                    case when value_11 is not null then 'Yes' else 'No' end as section_6_neuro_muscular_yes,
+                    case when value_11 is null then 'Yes' else 'No' end as section_6_neuro_muscular_no,
+                    case when value_12 is not null then 'Yes' else 'No' end as section_6_stomach_gastrointestinal_yes,
+                    case when value_12 is null then 'Yes' else 'No' end as section_6_stomach_gastrointestinal_no,
+                    case when value_13 is not null then 'Yes' else 'No' end as section_6_joint_disorder_yes,
+                    case when value_13 is null then 'Yes' else 'No' end as section_6_joint_disorder_no,
+                    case when value_14 is not null then 'Yes' else 'No' end as section_6_seizures_convulsion_epilepsy_yes,
+                    case when value_14 is null then 'Yes' else 'No' end as section_6_seizures_convulsion_epilepsy_no,
+                    case when value_15 is not null then 'Yes' else 'No' end as section_6_any_other_medical_condition_yes,
+                    case when value_15 is null then 'Yes' else 'No' end as section_6_any_other_medical_condition_no
 
 
-            #     from crosstab($$ select hdi.employee_id as id, value_lookup as attr, hdidt.lookupmodel_id = lkup.id as value from lookup_data lkup 
-            #     left join healthquestionaire_dependentinfomodel hdi on hdi.employee_id = """ + str(employee_id) + """
-            #     Left join healthquestionaire_dependentinfomodel_diagnose_treated hdidt on hdidt.dependentinfomodel_id = hdi.id and  hdidt.lookupmodel_id = lkup.id
-            #     where lkup.type_lookup = 'med_conditions' order by 1 $$) as ct (employee_id int, value_1 bool, value_2 bool,value_3 bool, value_4 bool,value_5 bool, value_6 bool,value_7 bool, value_8 bool,value_9 bool, value_10 bool,value_11 bool, value_12 bool, value_13 bool, value_14 bool, value_15 bool)
-            # """
-            # cursor.execute(sql)
-            # columns = [col[0] for col in cursor.description]
-            # data_med_conditions = [dict(zip(columns, row))
-            #     for row in cursor.fetchall()]
-            # if data_med_conditions:
-            #     for (key, value) in data_med_conditions[0].items():
-            #     # Check if key is even then add pair to new dictionary
-            #         # if value == 'Yes':
-            #         #     data_med_conditions[0][key] = pdfrw.PdfName('Yes')
+                from crosstab($$ select hdi.employee_id as id, value_lookup as attr, hdidt.lookupmodel_id = lkup.id as value from lookup_data lkup 
+                left join healthquestionaire_dependentinfomodel hdi on hdi.employee_id = """ + str(employee_id) + """
+                Left join healthquestionaire_dependentinfomodel_diagnose_treated hdidt on hdidt.dependentinfomodel_id = hdi.id and  hdidt.lookupmodel_id = lkup.id
+                where lkup.type_lookup = 'med_conditions' order by 1 $$) as ct (employee_id int, value_1 bool, value_2 bool,value_3 bool, value_4 bool,value_5 bool, value_6 bool,value_7 bool, value_8 bool,value_9 bool, value_10 bool,value_11 bool, value_12 bool, value_13 bool, value_14 bool, value_15 bool)
+            """
+            cursor.execute(sql)
+            columns = [col[0] for col in cursor.description]
+            data_med_conditions = [dict(zip(columns, row))
+                for row in cursor.fetchall()]
+            if data_med_conditions:
+                for (key, value) in data_med_conditions[0].items():
+                # Check if key is even then add pair to new dictionary
+                    # if value == 'Yes':
+                    #     data_med_conditions[0][key] = pdfrw.PdfName('Yes')
                     
-            #         pdf_data[key] = value
+                    pdf_data[key] = value
             # print(pdf_data)
             sql = """
                 select case when hdi.past_5_insu_decl_id = 18 then 'Yes' else 'No' end as section_6_question_2_yes,
@@ -300,8 +305,12 @@ def create_pdf_files(employee_id):
                 case when hdi.anticipate_hozpital_id = 19 then 'Yes' else 'No' end as section_6_question_5_no,
                 case when hdi.dependent_pregnant_id = 18 then 'Yes' else 'No' end as section_6_question_6_yes,
                 case when hdi.dependent_pregnant_id = 19 then 'Yes' else 'No' end as section_6_question_6_no,
-                hdi.self_height_feet as section_6_employee_height_feet, hdi.self_weight_lbs as section_6_employee_weight,
-                hdi.spouse_height_feet as section_6_spouse_height_feet, hdi.spouse_weight_lbs as section_6_spouse_weight 
+                SPLIT_PART(hdi.self_height_feet, '\'', 1) as section_6_employee_height_feet,
+                SPLIT_PART(hdi.self_height_feet, '\'', 2) as section_6_employee_height_inches,
+                hdi.self_weight_lbs as section_6_employee_weight,
+                SPLIT_PART(hdi.spouse_height_feet, '\'', 1) as section_6_spouse_height_feet,
+                SPLIT_PART(hdi.spouse_height_feet, '\'', 2) as section_6_spouse_height_inches,
+                hdi.spouse_weight_lbs as section_6_spouse_weight 
                 from healthquestionaire_dependentinfomodel hdi where hdi.employee_id = """ + str(employee_id)
             cursor.execute(sql)
             columns = [col[0] for col in cursor.description]
@@ -313,7 +322,8 @@ def create_pdf_files(employee_id):
             # Adding Employee Dependents to pdf form
             sql = """
             select empldep.first_name || ' ' || empldep.last_name as section_4_first_name_last_name_row, (select value_lookup from lookup_data where id = empldep.relationship_id limit 1) as section_4_relationship_row,
-                empldep.ssn as section_4_ssn_row, empldep.dob_dependent as section_4_doc_row, empldep.age as section_4_age_row, (select value_lookup from lookup_data where id = empldep.gender_id limit 1) as section_4_gender_row
+                empldep.ssn as section_4_ssn_row, empldep.dob_dependent as section_4_dob_row, empldep.age as section_4_age_row, (select key_lookup from lookup_data where id = empldep.gender_id limit 1) as section_4_gender_row,
+                case when empldep.tobacco_use_id = 18 then 'YES' else 'NO' end as section_4_tobacco_use_row 
                 from employee_dependents empldep where employee_id = """ + str(employee_id)
             cursor.execute(sql)
             columns = [col[0] for col in cursor.description]
