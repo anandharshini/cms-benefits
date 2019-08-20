@@ -265,8 +265,8 @@ def create_pdf_files(employee_id):
                     case when value_9 is null then 'Yes' else 'No' end as section_6_alcohol_drug_abuse_no,
                     case when value_10 is not null then 'Yes' else 'No' end as section_6_mental_nervous_disorder_yes,
                     case when value_10 is null then 'Yes' else 'No' end as section_6_mental_nervous_disorder_no,
-                    case when value_11 is not null then 'Yes' else 'No' end as section_6_neuro_muscular_yes,
-                    case when value_11 is null then 'Yes' else 'No' end as section_6_neuro_muscular_no,
+                    case when value_11 is not null then 'Yes' else 'No' end as section_6_neuromuscular_disorder_yes,
+                    case when value_11 is null then 'Yes' else 'No' end as section_6_neuromuscular_disorder_no,
                     case when value_12 is not null then 'Yes' else 'No' end as section_6_stomach_gastrointestinal_yes,
                     case when value_12 is null then 'Yes' else 'No' end as section_6_stomach_gastrointestinal_no,
                     case when value_13 is not null then 'Yes' else 'No' end as section_6_joint_disorder_yes,
@@ -305,11 +305,11 @@ def create_pdf_files(employee_id):
                 case when hdi.anticipate_hozpital_id = 19 then 'Yes' else 'No' end as section_6_question_5_no,
                 case when hdi.dependent_pregnant_id = 18 then 'Yes' else 'No' end as section_6_question_6_yes,
                 case when hdi.dependent_pregnant_id = 19 then 'Yes' else 'No' end as section_6_question_6_no,
-                SPLIT_PART(hdi.self_height_feet, '\'', 1) as section_6_employee_height_feet,
-                SPLIT_PART(hdi.self_height_feet, '\'', 2) as section_6_employee_height_inches,
+                SPLIT_PART(hdi.self_height_feet, '''', 1) as section_6_employee_height_feet,
+                SPLIT_PART(hdi.self_height_feet, '''', 2) as section_6_employee_height_inches,
                 hdi.self_weight_lbs as section_6_employee_weight,
-                SPLIT_PART(hdi.spouse_height_feet, '\'', 1) as section_6_spouse_height_feet,
-                SPLIT_PART(hdi.spouse_height_feet, '\'', 2) as section_6_spouse_height_inches,
+                SPLIT_PART(hdi.spouse_height_feet, '''', 1) as section_6_spouse_height_feet,
+                SPLIT_PART(hdi.spouse_height_feet, '''', 2) as section_6_spouse_height_inches,
                 hdi.spouse_weight_lbs as section_6_spouse_weight 
                 from healthquestionaire_dependentinfomodel hdi where hdi.employee_id = """ + str(employee_id)
             cursor.execute(sql)
