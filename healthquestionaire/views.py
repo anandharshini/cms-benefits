@@ -144,7 +144,7 @@ class CoverageModelCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context["back_url"] = ''.join(['employee/edit/', str(self.request.GET.get('employee', '')), '/?toolbar_off'])
         return context
-    
+
 def employeeview(request):
     employer_id = request.GET.get('employer', None)
     heading_message = 'Employee Information'

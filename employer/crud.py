@@ -21,7 +21,7 @@ class EmployerCrud(BaseCrudBuilder):
     }
 
     # permissions = {
-    #     'list': 'example.person_list',
+    #     'list': 'employer.person_list',
     #     'create': 'example.person_create'
     # }
 
