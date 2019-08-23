@@ -2,5 +2,30 @@
 {% load cms_tags %}
 
 {% block content %}
-    <h1>Broker Home</h1>
+    <form method="get">
+        {{ filter.form.as_p }}
+        <button type="submit">Search</button>
+    </form>
+    <table class="striped">
+        <thead>
+            <tr>
+                <td>Application Type</td>
+                <td>Employer</td>
+                <td>Employee</td>
+                <td>PDF File</td>
+                <td>Completed</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app_mod in filter.qs %}
+                <tr>
+                    <td>{{ app_mod.form_name }}</td>
+                    <td>{{ app_mod.employee__fk_employer }}</td>
+                    <td>{{ app_mod.employee }}</td>
+                    <td><a href="{{ app_mod.pdf_file }}">Click to Download</a></td>
+                    <td>{{ app_mod.completed }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

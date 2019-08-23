@@ -5,6 +5,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
 from core.forms import SignUpForm, EmployeeDependentForm, SignatureForm
 from core.tokens import account_activation_token
+from core.models import LookupModel
 from .models import EmployeeDependent
 from django.conf import settings
 from healthquestionaire.models import EmployeeModel
@@ -14,16 +15,24 @@ from healthquestionaire.views import get_employee_instance
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 from core.utils import signaturemerger, calculateAge, create_pdf_files, upload_file_to_s3, check_signed_file_exists
-
+from django.contrib.auth.models import Group
+from form_application.models import ApplicationModel
+from django.shortcuts import get_object_or_404
 
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
+            default_group = Group.objects.get(name='Employee')
             user = form.save(commit=False)
             user.is_active = True
             user.is_staff = True
             user.save()
+            print(user.profile, 'after creating user')
+            user.profile.employer = form.cleaned_data['employer']
+            user.profile.birth_date = form.cleaned_data['birth_date']
+            user.profile.save()
+            user.groups.add(default_group)
             current_site = get_current_site(request)
             # subject = 'Activate Your MySite Account'
             # message = render_to_string('account_activation_email.html', {
@@ -117,6 +126,27 @@ def signatureview(request):
                 signaturemerger(employee_file, sign_file, signed_file, data_dict)
                 upload_file_to_s3(signed_file, ''.join([str(employee.id), '_signed_pdf']))
                 bln_check_file = check_signed_file_exists(employee.id)
+                if (employee):
+                    try:
+                        if (bln_check_file):
+                            form_completed = True
+                        else:
+                            form_completed = False
+                        form_type = LookupModel.objects.get(id=40)
+                        app_model = get_object_or_404(ApplicationModel, form_name=form_type, employee=employee)
+                        app_model.update(completed=form_completed)
+                    except Http404:
+                        app_model = ApplicationModel(
+                            form_name = form_type, 
+                            submit_user = request.user, 
+                            employee = employee,
+                            completed = form_completed,
+                            pdf_file = ''.join([settings.STATIC_URL, 'media/submitted/', str(employee.id), '_signed_pdf'])
+                        )    
+                        app_model.full_clean()
+                        app_model.save()
+                    except Exception as e:
+                        print(e, 'app model error')
             except Exception as ex:
                 error = ex
 

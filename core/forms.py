@@ -4,14 +4,15 @@ from django.contrib.auth.models import User
 from .models import EmployeeDependent, HeightWeight, LookupModel
 from django.contrib.admin import widgets 
 from django.forms import modelformset_factory
-
+from employer.models import Employer
 class SignUpForm(UserCreationForm):
-    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
-    birth_date = forms.DateField(help_text='Required. Format: YYYY-MM-DD')
+    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.', required=True)
+    birth_date = forms.DateField(help_text='Required. Format: YYYY-MM-DD', required=True)
+    employer = forms.ModelChoiceField(queryset=Employer.objects.all(), required=True)
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'birth_date', 'password1', 'password2', )
+        fields = ('username', 'email', 'birth_date', 'employer', 'password1', 'password2', )
 
 class HeightWeightForm(forms.ModelForm):
     class Meta:

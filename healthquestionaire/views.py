@@ -234,17 +234,7 @@ def dependentinfoview(request):
                 saved_data.diagnose_treated.add(*form.cleaned_data['diagnose_treated'])
                 saved_data.employee = employee
                 saved_data.save()
-            # print(saved_data)
-            # app_model = ApplicationModel(
-            #     name = employee.form_type, 
-            #     submit_user = request.user, 
-            #     employee = employee 
-            # )
-            # try:
-            #     app_model.full_clean()
-            #     app_model.save()
-            # except ValidationError as e:
-            #         print(e, 'app model error')
+            
             
             return redirect(''.join([settings.PREFIX_URL, 'medicals/?toolbar_off&employee=', str(employee.id)]))
     if employee:
