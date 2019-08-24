@@ -36,3 +36,11 @@ class BrokerApp(CMSApp):
 
     def get_urls(self, page=None, language=None, **kwargs):
         return ['broker_app.urls']
+
+@apphook_pool.register
+class EmployerApp(CMSApp):
+    app_name = "employer_application"
+    name = _("Employee Applications")
+
+    def get_urls(self, page=None, language=None, **kwargs):
+        return ['employer.urls']

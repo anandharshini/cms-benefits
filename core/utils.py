@@ -277,10 +277,10 @@ def create_pdf_files(employee_id):
                     case when value_15 is null then 'Yes' else 'No' end as section_6_any_other_medical_condition_no
 
 
-                from crosstab($$ select hdi.employee_id as id, value_lookup as attr, hdidt.lookupmodel_id = lkup.id as value from lookup_data lkup 
+                from crosstab($$ select hdi.employee_id as id, key_lookup as attr, hdidt.lookupmodel_id = lkup.id as value from lookup_data lkup 
                 left join healthquestionaire_dependentinfomodel hdi on hdi.employee_id = """ + str(employee_id) + """
                 Left join healthquestionaire_dependentinfomodel_diagnose_treated hdidt on hdidt.dependentinfomodel_id = hdi.id and  hdidt.lookupmodel_id = lkup.id
-                where lkup.type_lookup = 'med_conditions' order by 1 $$) as ct (employee_id int, value_1 bool, value_2 bool,value_3 bool, value_4 bool,value_5 bool, value_6 bool,value_7 bool, value_8 bool,value_9 bool, value_10 bool,value_11 bool, value_12 bool, value_13 bool, value_14 bool, value_15 bool)
+                where lkup.type_lookup = 'med_conditions' order by 2 $$) as ct (employee_id int, value_1 bool, value_2 bool,value_3 bool, value_4 bool,value_5 bool, value_6 bool,value_7 bool, value_8 bool,value_9 bool, value_10 bool,value_11 bool, value_12 bool, value_13 bool, value_14 bool, value_15 bool)
             """
             cursor.execute(sql)
             columns = [col[0] for col in cursor.description]

@@ -179,7 +179,9 @@ def employeeview(request):
             employee = get_object_or_404(EmployeeModel, login_user=user)
             form = EmployeeModelForm(instance=employee)
         except Http404:
-            form = EmployeeModelForm(initial={ 'login_user': request.user, 'all_forms_completed': False})
+            form = EmployeeModelForm(initial={ 'login_user': request.user, 'all_forms_completed': False, 
+                'fk_employer': user.profile.employer, 'empl_dob': user.profile.birth_date, 
+                'email_address': user.email})
     return render(request,'healthquestionaire/employee_form.html',{'form': form, 'heading': heading_message, 'heading_direction': heading_direction, 'back_url': settings.PREFIX_URL})
 
 def coverageview(request):
@@ -228,10 +230,15 @@ def dependentinfoview(request):
             form = DependentInfoForm(request.POST)
         if form.is_valid():
             if employee:
+                print('before save diagnose treated')
                 saved_data = form.save(commit=False)
-                print(saved_data.diagnose_treated, form.cleaned_data, 'diagnose')
-                saved_data.diagnose_treated.clear()
-                saved_data.diagnose_treated.add(*form.cleaned_data['diagnose_treated'])
+                print('after save')
+                try:
+                    print(saved_data.diagnose_treated, form.cleaned_data, 'diagnose')
+                    saved_data.diagnose_treated.clear()
+                    saved_data.diagnose_treated.add(*form.cleaned_data['diagnose_treated'])
+                except Exception as ex:
+                    print('cant save diagnose treated')
                 saved_data.employee = employee
                 saved_data.save()
             

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from form_application.models import ApplicationModel
-from .filters import ApplicationModelFilter
+from core.filters import ApplicationModelFilter
 
 # Create your views here.
 

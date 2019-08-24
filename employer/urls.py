@@ -9,6 +9,7 @@ from . import views
 # ]
 
 urlpatterns = [
-    url('edit/<int:pk>/', views.edit, name='employer_edit',),
-    url('create/', views.employerview, name='employer_create',),
+    # url('edit/<int:pk>/', views.edit, name='employer_edit',),
+    # url('create/', views.employerview, name='employer_create',),
+    url('', views.show_employees_apps, name='employer_home'),
 ]

@@ -3,6 +3,9 @@ from .forms import EmployerForm
 from .models import Employer
 from django.http import Http404
 from django.conf import settings
+from form_application.models import ApplicationModel
+from core.filters import ApplicationModelFilter
+from healthquestionaire.views import get_employee_instance
 # from django.views.generic import ListView, DetailView
 # #home view for employers. employers are displayed in a list
 # class IndexView(ListView):
@@ -15,6 +18,14 @@ from django.conf import settings
 #     model=Employer
 #     template_name = 'employer-detail.html'
 #New Employer view (Create new Employer)
+
+def show_employees_apps(request):
+    employee = get_employee_instance(request.user, request.GET.get('employee', None))
+    employee_apps = ApplicationModel.objects.filter(employee__fk_employer=employee.fk_employer)
+    apps_filter = ApplicationModelFilter(request.GET, queryset=employee_apps)
+    return render(request, 'employer/employee_apps.html', {'filter': apps_filter})
+
+
 def employerview(request):
     if request.method == 'POST':
         try:
