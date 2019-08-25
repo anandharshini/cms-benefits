@@ -34,7 +34,7 @@
     </div>
   </nav>
 
-  <main style="padding: 5px 15px 5px 15px;">
+  <main>
       {% block content %}{% endblock content %}
   </main>
   <footer class="page-footer"  style="background-color: #2E2E2E;">
@@ -79,7 +79,7 @@
   }
 
   main {
-    flex: 1 0 auto;
+    min-height: calc(80vh - 90px);
   }
   </style>
 
