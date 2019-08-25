@@ -8,6 +8,8 @@ from django.db import connection
 import boto3
 from botocore.exceptions import ClientError
 from django.conf import settings
+from django.http import HttpResponse
+from django.utils.encoding import smart_str
 
 register = template.Library()
 
@@ -391,6 +393,29 @@ def upload_file_to_s3(uploadfile, object_name, s3_dir='static/media/submitted/')
         # print(response)
         s3_client.upload_file(uploadfile, bucket_name, ''.join([s3_dir,object_name,'.pdf']), ExtraArgs={'ACL':'public-read'})
         # print(response)
+    except ClientError as e:
+        print(e, 'upload file to s3 error')
+        return False
+    except Exception as ex:
+        print(ex, 'upload file failed')
+        return False
+    return True
+
+def download_file(request):
+    bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+    str_file_name = request.GET.get('str_file_name', None)
+    if (str_file_name is None):
+        return False
+    try:
+        # s3 = boto3.resource('s3')
+        s3_client = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+        with open(''.join(['local_', str_file_name, '.pdf']), 'wb') as f:
+            s3_client.download_fileobj(bucket_name, ''.join(['static/media/submitted/', str_file_name, '.pdf']), f)
+        f.close()
+        with open(''.join(['local_', str_file_name, '.pdf']), 'rb') as fr:
+            response = HttpResponse(fr.read(), content_type='application/force-download')
+            response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(''.join(['local_', str_file_name, '.pdf']))
+            return response
     except ClientError as e:
         print(e, 'upload file to s3 error')
         return False

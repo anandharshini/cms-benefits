@@ -287,3 +287,4 @@ DEFAULT_FILE_STORAGE = 'bportal.storage_backends.PublicMediaStorage'
 
 # PREFIX_URL = '/dev/'
 PREFIX_URL = '/'
+DOWNLOAD_URL = '/sss-file/'

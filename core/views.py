@@ -141,7 +141,7 @@ def signatureview(request):
                             submit_user = request.user, 
                             employee = employee,
                             completed = form_completed,
-                            pdf_file = ''.join([settings.STATIC_URL, 'media/submitted/', str(employee.id), '_signed_pdf'])
+                            pdf_file = ''.join([str(employee.id), '_signed_pdf'])
                         )    
                         app_model.full_clean()
                         app_model.save()

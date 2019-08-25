@@ -9,6 +9,7 @@ from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.static import serve
+from core.utils import download_file
 
 from core import views as core_views
 
@@ -29,6 +30,7 @@ urlpatterns += i18n_patterns(
     url(r'^employer/', include('employer.urls')),
     url(r'^employee/', include('healthquestionaire.employee_urls')),
     url(r'^crud/', include('crudbuilder.urls')),
+    url(r'^sss-file/', download_file),
     url(r'^', include('cms.urls')),
 )
 
