@@ -39,7 +39,7 @@
   </main>
   <footer class="page-footer"  style="background-color: #2E2E2E;">
     {% static_placeholder 'footer' or %}
-    <div class="container">
+    <div class="content">
         <div class="row">
             <div class="col s4">
                 <img src="http://www.alfordllc.com/wp-content/uploads/2017/07/Alford-logo-footer-1.png"/>
@@ -70,8 +70,17 @@
 
   <style>
   nav ul a {
-  color: #58585A;
-}
+    color: #58585A;
+  }
+  body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
   </style>
 
   <!--  Scripts-->

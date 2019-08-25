@@ -2,10 +2,12 @@
 {% load cms_tags %}
 
 {% block content %}
-    <form method="get">
-        {{ filter.form.as_p }}
-        <button type="submit">Search</button>
-    </form>
+    {% block table_filters %}
+        <form method="get">
+            {{ filter.form.as_p }}
+            <button type="submit">Search</button>
+        </form>
+    {% endblock %}
     {% block table_applications %}
     {% endblock %}
 {% endblock %}

@@ -6,4 +6,4 @@ class ApplicationModelFilter(django_filters.FilterSet):
     form_name = django_filters.ModelChoiceFilter(queryset=LookupModel.objects.filter(type_lookup='form_type'))
     class Meta:
         model = ApplicationModel
-        fields = ['form_name', 'employee', 'employee__fk_employer', ]
+        fields = ['employee__fk_employer', ]
