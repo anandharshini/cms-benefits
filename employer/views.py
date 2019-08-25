@@ -23,7 +23,7 @@ def show_employees_apps(request):
     employee = get_employee_instance(request.user, request.GET.get('employee', None))
     employee_apps = ApplicationModel.objects.filter(employee__fk_employer=employee.fk_employer)
     apps_filter = ApplicationModelFilter(request.GET, queryset=employee_apps)
-    return render(request, 'employer/employee_apps.html', {'filter': apps_filter})
+    return render(request, 'employer/employee_apps.html', {'filter': apps_filter, 'download_url': settings.DOWNLOAD_URL})
 
 
 def employerview(request):
