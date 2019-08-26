@@ -158,7 +158,7 @@ INSTALLED_APPS = [
     'crudbuilder'
 ]
 
-LOGIN_REDIRECT_URL = '/?toolbar_off'
+LOGIN_REDIRECT_URL = 'login_success'
 LOGOUT_REDIRECT_URL = '/accounts/login/?toolbar_off'
 
 LANGUAGES = (

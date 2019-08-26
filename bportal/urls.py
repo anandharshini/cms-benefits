@@ -31,6 +31,7 @@ urlpatterns += i18n_patterns(
     url(r'^employee/', include('healthquestionaire.employee_urls')),
     url(r'^crud/', include('crudbuilder.urls')),
     url(r'^sss-file/', download_file),
+    url(r'^login_success/', core_views.login_success, name='login_success'),
     url(r'^', include('cms.urls')),
 )
 

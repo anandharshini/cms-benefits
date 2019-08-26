@@ -20,7 +20,10 @@
                     <td>{{ app_mod.form_name }}</td>
                     <td>{{ app_mod.employee.fk_employer.name }}</td>
                     <td>{{ app_mod.employee }}</td>
-                    <td><a target="_blank" href="{{download_url}}?str_file_name={{app_mod.pdf_file}}" >Click to Download</a></td>
+                    <td> {% if app_mod.completed %}
+                            <a target="_blank" href="{{download_url}}?str_file_name={{app_mod.pdf_file}}" >Click to Download</a>
+                        {% endif %}
+                    </td>
                     <td>{{ app_mod.completed }}</td>
                 </tr>
             {% endfor %}

@@ -17,7 +17,6 @@ from reportlab.lib.utils import ImageReader
 from core.utils import signaturemerger, calculateAge, create_pdf_files, upload_file_to_s3, check_signed_file_exists
 from django.contrib.auth.models import Group
 from form_application.models import ApplicationModel
-from django.shortcuts import get_object_or_404
 
 def signup(request):
     if request.method == 'POST':
@@ -176,3 +175,17 @@ def signatureview(request):
             'PREFIX_URL': settings.PREFIX_URL,
             'error_status': error
         })
+    
+
+def login_success(request):
+    """
+    Redirects users based on whether they are in the admins group
+    """
+    print(request.user.groups)
+    if request.user.groups.filter(name="Broker").exists():
+        # user is Broker
+        return redirect("/completed_applications/?toolbar_off")
+    elif request.user.groups.filter(name="Employer").exists():
+        return redirect("/all-applications/?toolbar_off")
+    else:
+        return redirect("/?toolbar_off")

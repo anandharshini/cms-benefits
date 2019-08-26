@@ -21,7 +21,11 @@ from healthquestionaire.views import get_employee_instance
 
 def show_employees_apps(request):
     employee = get_employee_instance(request.user, request.GET.get('employee', None))
-    employee_apps = ApplicationModel.objects.filter(employee__fk_employer=employee.fk_employer)
+    if employee is None:
+        user_employer = request.user.profile.employer
+    else:
+        user_employer = employee.fk_employer
+    employee_apps = ApplicationModel.objects.filter(employee__fk_employer=user_employer)
     apps_filter = ApplicationModelFilter(request.GET, queryset=employee_apps)
     return render(request, 'employer/employee_apps.html', {'filter': apps_filter, 'download_url': settings.DOWNLOAD_URL})
 
