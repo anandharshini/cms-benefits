@@ -114,7 +114,7 @@ MIDDLEWARE = [
     'cms.middleware.language.LanguageCookieMiddleware'
 ]
 
-SESSION_EXPIRY_TIME = 300
+SESSION_EXPIRY_TIME = 1800
 
 INSTALLED_APPS = [
     'djangocms_admin_style',
