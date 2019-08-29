@@ -2,14 +2,15 @@
 {% load cms_tags %}
 
 {% block table_applications %}
-    <table class="striped">
+<div class="container">
+    <table class="striped" style="font-size: 10pt; border: 1px solid #992A43; margin-top:2px;">
         <thead>
-            <tr>
+            <tr style="border: 1px solid #992A43;">
                 <td>Application Type</td>
                 <td>Employer</td>
                 <td>Employee</td>
-                <td>PDF File</td>
                 <td>Completed</td>
+                <td>PDF File</td>
             </tr>
         </thead>
         <tbody>
@@ -18,10 +19,11 @@
                     <td>{{ app_mod.form_name }}</td>
                     <td>{{ app_mod.employee.fk_employer.name }}</td>
                     <td>{{ app_mod.employee }}</td>
-                    <td><a target="_blank" href="{{download_url}}?str_file_name={{app_mod.pdf_file}}" >Click to Download</a></td>
                     <td>{{ app_mod.completed }}</td>
+                    <td><a target="_blank" href="{{download_url}}?str_file_name={{app_mod.pdf_file}}" >Click to Download</a></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+</div>
 {% endblock %}

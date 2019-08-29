@@ -1,17 +1,18 @@
 {% extends "base_applications.html" %}
 {% load cms_tags %}
 
+<div class="container">
 {% block table_filters %}
 {% endblock %}
 {% block table_applications %}
-    <table class="striped">
+    <table class="striped" style="font-size: 10pt; border: 1px solid #992A43; margin-top:2px;">
         <thead>
-            <tr>
+            <tr style="border: 1px solid #992A43;">
                 <td>Application Type</td>
                 <td>Employer</td>
                 <td>Employee</td>
-                <td>PDF File</td>
                 <td>Completed</td>
+                <td>PDF File</td>
             </tr>
         </thead>
         <tbody>
@@ -20,13 +21,14 @@
                     <td>{{ app_mod.form_name }}</td>
                     <td>{{ app_mod.employee.fk_employer.name }}</td>
                     <td>{{ app_mod.employee }}</td>
+                    <td>{{ app_mod.completed }}</td>
                     <td> {% if app_mod.completed %}
                             <a target="_blank" href="{{download_url}}?str_file_name={{app_mod.pdf_file}}" >Click to Download</a>
                         {% endif %}
                     </td>
-                    <td>{{ app_mod.completed }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+</div>
 {% endblock %}

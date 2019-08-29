@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\Anand\\AppData\\Local\\Continuum\\anaconda3\\envs\\django-cms-env\\python.exe",
+    "python.pythonPath": "C:\\Users\\Chad Howell\\Anaconda3\\envs\\Benifits_CMS\\python.exe",
     "appService.defaultWebAppToDeploy": "/subscriptions/8af8015a-7557-4886-a4a5-fad134be1453/resourceGroups/cms-benefits-group/providers/Microsoft.Web/sites/azure-benefits-cms-portal",
     "appService.deploySubpath": ""
 }
