@@ -4,7 +4,7 @@ from .models import Employer
 
 class EmployerCrud(BaseCrudBuilder):
     model = Employer
-    search_fields = ['name']
+    search_fields = ['name', 'street', 'city', 'state',]
     tables2_fields = ('name', 'street', 'address2','city','state','zip_code',)
     tables2_css_class = "table table-bordered table-condensed"
     tables2_pagination = 10  # default is 10
