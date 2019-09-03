@@ -10,7 +10,7 @@ class EmployerCrud(BaseCrudBuilder):
     tables2_pagination = 10  # default is 10
     modelform_excludes = []
     login_required = True
-    permission_required = True
+    permission_required = False
     # custom_table2 = CustomPersonTable
 
     # detailview_excludes = ['img']
