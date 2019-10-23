@@ -2,7 +2,7 @@ boto3==1.9.207
 botocore==1.12.207
 certifi==2019.6.16
 dj-database-url==0.5.0
-Django==2.1.5
+Django=>2.1.11
 django-classy-tags==0.9.0
 django-cms==3.6.0
 django-crudbuilder==0.2.7
